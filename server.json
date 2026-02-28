@@ -1,0 +1,72 @@
+{
+  "name": "limitguard-trust-intelligence",
+  "display_name": "LimitGuard Trust Intelligence",
+  "description": "Entity verification, sanctions screening, and trust scoring for AI agents. Pay-per-call via x402 micropayments.",
+  "repository": {
+    "url": "https://github.com/JWconsultancy1234/limitguard-mcp",
+    "source": "github"
+  },
+  "version_detail": {
+    "version": "1.0.1",
+    "release_date": "2026-02-27"
+  },
+  "packages": [],
+  "remotes": [
+    {
+      "transportType": "streamable-http",
+      "url": "https://api.limitguard.ai/mcp"
+    }
+  ],
+  "tools": [
+    {
+      "name": "check_entity",
+      "description": "Full entity trust check — KVK/CBE registry, sanctions, domain, risk scoring",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "check_agent",
+      "description": "Verify AI agent identity and reputation before inter-agent transactions",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "trust_score",
+      "description": "Get entity trust score (0-100) with cluster assignment and recommendation",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "verify_wallet",
+      "description": "Verify blockchain wallet address, on-chain activity and risk flags",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "risk_score",
+      "description": "Quick risk score for entity name + country pair",
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    }
+  ]
+}

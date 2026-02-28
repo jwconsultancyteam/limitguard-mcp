@@ -1,0 +1,8 @@
+name: limitguard/trust-intelligence
+description: Trust Intelligence for AI agents — entity verification, sanctions screening, and risk scoring via x402 micropayments
+startCommand:
+  type: http
+  configSchema:
+    type: object
+    properties: {}
+  url: https://api.limitguard.ai/mcp
