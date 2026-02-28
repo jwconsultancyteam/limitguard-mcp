@@ -24,8 +24,9 @@ All tools are priced via [x402](https://www.x402.org/) micropayments (USDC on Ba
 |----------|-------|
 | Entity Check | $0.85 |
 | Risk Score | $0.65 |
-| Trust Score | $0.65 |
-| KYB Check | $1.50 |
+| Check Agent | $0.10 |
+| Trust Score | $0.10 |
+| Verify Wallet | $0.10 |
 
 No API key, no subscription. Your AI agent pays per call with USDC.
 
