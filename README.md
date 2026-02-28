@@ -24,9 +24,8 @@ All tools are priced via [x402](https://www.x402.org/) micropayments (USDC on Ba
 |----------|-------|
 | Entity Check | $0.85 |
 | Risk Score | $0.65 |
-| Reputation Score | $0.65 |
+| Trust Score | $0.65 |
 | KYB Check | $1.50 |
-| KYB Enhanced | $3.00 |
 
 No API key, no subscription. Your AI agent pays per call with USDC.
 
@@ -97,7 +96,6 @@ Connect to `https://api.limitguard.ai/mcp` using Streamable HTTP transport (POST
 ## Links
 
 - **Website:** [limitguard.ai](https://limitguard.ai)
-- **API Docs:** [api.limitguard.ai](https://api.limitguard.ai/docs)
 - **Status:** [status.limitguard.ai](https://status.limitguard.ai)
 - **MCP Registry:** [ai.limitguard.api/trust-intelligence](https://registry.modelcontextprotocol.io/servers/ai.limitguard.api/trust-intelligence)
 
