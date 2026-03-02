@@ -1,4 +1,9 @@
 {
   "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "name": "limitguard",
+  "description": "Trust Intelligence API — entity screening, sanctions, risk scoring, IBAN validation, and compliance checks via MCP",
+  "homepage": "https://limitguard.ai",
+  "license": "MIT",
+  "categories": ["compliance", "risk", "finance", "security"],
   "maintainers": ["JWconsultancy1234"]
 }
