@@ -3,7 +3,7 @@
   "display_name": "LimitGuard Trust Intelligence",
   "description": "Entity verification, sanctions screening, and trust scoring for AI agents. Pay-per-call via x402 micropayments.",
   "repository": {
-    "url": "https://github.com/JWconsultancy1234/limitguard-mcp",
+    "url": "https://github.com/jwconsultancyteam/limitguard-mcp",
     "source": "github"
   },
   "version_detail": {
