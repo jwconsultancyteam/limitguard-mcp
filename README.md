@@ -71,7 +71,10 @@ Payment works the same way: USDC on Base or Solana, pay-per-call, no API key req
 
 ### API key tiers
 
-One-time x402 payment upgrades an API key to a monthly call allowance.
+LimitGuard accepts two forms of payment: x402 per call — which needs no API key, as everywhere
+else in this README — or an API key carrying a monthly call allowance. A base key is free and
+self-service: `POST /v1/keys/create` with an email address, no payment and no existing key needed.
+The endpoints below take a one-time x402 payment to raise that key's monthly allowance.
 
 | Endpoint | Method | Price | Tier | Allowance |
 |----------|--------|-------|------|-----------|
