@@ -30,15 +30,23 @@ All tools are priced via [x402](https://www.x402.org/) micropayments (USDC on Ba
 
 No API key, no subscription. Your AI agent pays per call with USDC.
 
-## Full REST API (x402 direct)
+## Full x402 API (direct HTTP)
 
 The 5 tools above are what the MCP server exposes over the Model Context Protocol. Clients that
-integrate directly over HTTP — instead of through an MCP client — can reach 13 further x402-priced
-REST endpoints on `https://api.limitguard.ai`. These are **not** MCP tools and are not listed by
-`/.well-known/mcp.json`; they are published in [/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json)
-alongside the MCP tools' own `/v1/mcp/*` paths.
+integrate directly over HTTP — instead of through an MCP client — can reach 18 x402-priced
+endpoints on `https://api.limitguard.ai`: the 13 REST endpoints below, plus the MCP tools' own
+`/v1/mcp/*` paths. All 18 are published in
+[/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json); only the 5 tools above
+are listed by `/.well-known/mcp.json`.
 
-Payment works the same way: USDC on Base or Solana, pay-per-call, no API key required.
+Most of the REST endpoints are capabilities the MCP tools do not expose, but two are the same
+check reached over plain HTTP: `/v1/entity/check` behind `check_entity` — the manifest describes
+`/v1/mcp/check-entity` as "same as `/v1/entity/check` with MCP-native interface" — and
+`/v1/risk/score` behind `risk_score`, at the same $0.65.
+
+Payment works the same way throughout: USDC on Base or Solana, pay-per-call. The 9 data endpoints
+below need no API key at all. The 4 `/v1/keys/upgrade/*` endpoints also take payment without one,
+but they act on an API key you already hold — see [API key tiers](#api-key-tiers).
 
 ### Trust intelligence
 
@@ -68,6 +76,20 @@ Payment works the same way: USDC on Base or Solana, pay-per-call, no API key req
 | `/v1/compliance/alerts` | GET | $0.10 | EU regulatory change alerts filtered by jurisdiction and severity. Covers GDPR, EU AI Act, MiCA, and AMLD6. |
 | `/v1/compliance/report/{id}` | GET | $0.50 | Compliance report for an entity. |
 | `/v1/compliance/readiness/{id}` | GET | $0.10 | Compliance readiness check for an entity. |
+
+### MCP tool paths (direct HTTP)
+
+The 5 MCP tools are also reachable over plain HTTP at their own x402-priced paths — same
+capabilities and prices as the Tools table above, for clients that pay per call without opening an
+MCP session.
+
+| Endpoint | Method | Price | MCP tool |
+|----------|--------|-------|----------|
+| `/v1/mcp/check-entity` | POST | $0.85 | `check_entity` |
+| `/v1/mcp/check-agent` | POST | $0.10 | `check_agent` |
+| `/v1/mcp/trust-score` | POST | $0.10 | `trust_score` |
+| `/v1/mcp/verify-wallet` | GET | $0.10 | `verify_wallet` |
+| `/v1/mcp/risk-score` | POST | $0.65 | `risk_score` |
 
 ### API key tiers
 
