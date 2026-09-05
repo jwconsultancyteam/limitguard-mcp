@@ -30,6 +30,59 @@ All tools are priced via [x402](https://www.x402.org/) micropayments (USDC on Ba
 
 No API key, no subscription. Your AI agent pays per call with USDC.
 
+## Full REST API (x402 direct)
+
+The 5 tools above are what the MCP server exposes over the Model Context Protocol. Clients that
+integrate directly over HTTP — instead of through an MCP client — can reach 13 further x402-priced
+REST endpoints on `https://api.limitguard.ai`. These are **not** MCP tools and are not listed by
+`/.well-known/mcp.json`; they are published in [/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json)
+alongside the MCP tools' own `/v1/mcp/*` paths.
+
+Payment works the same way: USDC on Base or Solana, pay-per-call, no API key required.
+
+### Trust intelligence
+
+| Endpoint | Method | Price | Description |
+|----------|--------|-------|-------------|
+| `/v1/entity/check` | POST | $0.85 | Full entity trust check across every verification layer — KVK/CBE registry, OpenSanctions, country risk (CPI/FATF), domain WHOIS, IBAN validation, EU VAT/VIES, wallet screening, and x402 payment history. Returns trust score 0-100 with cluster and recommendation. |
+| `/v1/risk/score` | POST | $0.65 | Quick risk score (0-100) for entity name + country. Lightweight check without the full data source scan. |
+
+### Reputation management
+
+| Endpoint | Method | Price | Description |
+|----------|--------|-------|-------------|
+| `/v1/reputation/score` | POST | $0.65 | Reputation scoring with Bayesian trust decay. Tracks entity trust over time with confidence intervals. |
+| `/v1/reputation/history/{id}` | GET | $0.10 | Reputation history for an entity. |
+
+### Wallet services
+
+| Endpoint | Method | Price | Description |
+|----------|--------|-------|-------------|
+| `/v1/wallet/balance` | GET | $0.10 | ERC-8004 agent wallet balance — USDC balance and transaction count for AI agent wallets. |
+
+### Regulatory compliance
+
+| Endpoint | Method | Price | Description |
+|----------|--------|-------|-------------|
+| `/v1/kyb/check` | POST | $1.50 | Know Your Business verification — company registration, sanctions screening, VAT/VIES, and domain analysis in one call. |
+| `/v1/compliance/alerts` | GET | $0.10 | EU regulatory change alerts filtered by jurisdiction and severity. Covers GDPR, EU AI Act, MiCA, and AMLD6. |
+| `/v1/compliance/report/{id}` | GET | $0.50 | Compliance report for an entity. |
+| `/v1/compliance/readiness/{id}` | GET | $0.10 | Compliance readiness check for an entity. |
+
+### API key tiers
+
+One-time x402 payment upgrades an API key to a monthly call allowance.
+
+| Endpoint | Method | Price | Tier | Allowance |
+|----------|--------|-------|------|-----------|
+| `/v1/keys/upgrade/indie` | GET | $29 | Indie | 1,000 calls/mo |
+| `/v1/keys/upgrade/starter` | GET | $99 | Starter | 10,000 calls/mo |
+| `/v1/keys/upgrade/growth` | GET | $299 | Growth | 50,000 calls/mo |
+| `/v1/keys/upgrade/pro` | GET | $999 | Pro | 250,000 calls/mo |
+
+Prices and descriptions above mirror the live x402 manifest as of 2026-09-05. The manifest is the
+source of truth — fetch it if you need the current schema for any endpoint.
+
 ## Quick Start
 
 ### Claude Desktop
