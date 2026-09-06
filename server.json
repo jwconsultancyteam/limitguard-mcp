@@ -38,7 +38,7 @@
       }
     },
     {
-      "name": "trust_score",
+      "name": "get_trust_score",
       "description": "Get entity trust score (0-100) with cluster assignment and recommendation",
       "annotations": {
         "readOnlyHint": true,
@@ -58,7 +58,7 @@
       }
     },
     {
-      "name": "risk_score",
+      "name": "get_risk_score",
       "description": "Quick risk score for entity name + country pair",
       "annotations": {
         "readOnlyHint": true,
