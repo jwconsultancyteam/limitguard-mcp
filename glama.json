@@ -1,9 +1,60 @@
 {
   "$schema": "https://glama.ai/mcp/schemas/server.json",
   "name": "limitguard",
-  "description": "Trust Intelligence API — entity screening, sanctions, risk scoring, IBAN validation, and compliance checks via MCP",
+  "description": "Trust Intelligence API for EU business entities over MCP: entity screening with sanctions checks, and risk scoring. REST is pure x402 pay-per-call with no signup. MCP needs a Bearer API key (free to create at POST /v1/keys/create); the free and sandbox tiers then pay per call with PAYMENT-SIGNATURE (x402 v2) or X-PAYMENT (v1), paid tiers are covered by their subscription.",
   "homepage": "https://limitguard.ai",
   "license": "MIT",
   "categories": ["compliance", "risk", "finance", "security"],
-  "maintainers": ["jwconsultancyteam"]
+  "maintainers": ["jwconsultancyteam"],
+  "auth": {
+    "rest": "x402 pay-per-call, no API key, no signup",
+    "mcp": "Authorization: Bearer <lg_live_...>; create a key free at POST https://api.limitguard.ai/v1/keys/create; free and sandbox tiers also send PAYMENT-SIGNATURE or X-PAYMENT per call; paid tiers (indie and up) need no per-call payment",
+    "documentation": "https://docs.limitguard.ai/authentication"
+  },
+  "pricing": {
+    "currency": "USDC",
+    "networks": ["eip155:8453", "eip155:84532", "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"],
+    "source_of_truth": "https://api.limitguard.ai/.well-known/x402.json",
+    "note": "Prices below mirror mcp_server/tier.py in limitguard-ai as of 2026-09-07. The x402 manifest is authoritative; fetch it for current values."
+  },
+  "tools": [
+    {
+      "name": "check_entity",
+      "description": "Full trust intelligence check on a business entity. Returns trust score (0-100), risk level, and recommendation.",
+      "inputs": ["entity_name (required)", "country (required)", "kvk_number", "domain"],
+      "price_usdc": 0.85,
+      "status": "live"
+    },
+    {
+      "name": "get_risk_score",
+      "description": "Quick risk assessment without full trust check. Focuses on risk signals only.",
+      "inputs": ["entity_name (required)", "country (required)"],
+      "price_usdc": 0.65,
+      "status": "live"
+    },
+    {
+      "name": "check_agent",
+      "description": "Verify AI agent trust. Checks if an AI agent is trusted based on its identifier. Unimplemented / beta: returns placeholder data.",
+      "inputs": ["agent_id (required)", "agent_name (required)"],
+      "price_usdc": 0.10,
+      "status": "unimplemented",
+      "pricing_note": "Placeholder tool. Charging is suspended by the decision on limitguard-ai#206 and drops to 0 when that ships; 0.10 until then."
+    },
+    {
+      "name": "get_trust_score",
+      "description": "Quick trust score lookup by entity ID. Returns cached score if available. Unimplemented / beta: returns placeholder data.",
+      "inputs": ["entity_id (required)"],
+      "price_usdc": 0.10,
+      "status": "unimplemented",
+      "pricing_note": "Placeholder tool. Charging is suspended by the decision on limitguard-ai#206 and drops to 0 when that ships; 0.10 until then."
+    },
+    {
+      "name": "verify_wallet",
+      "description": "Check wallet trust score for crypto payments. Supports EVM and Solana addresses. Unimplemented / beta: returns placeholder data.",
+      "inputs": ["wallet_address (required)", "chain_id"],
+      "price_usdc": 0.10,
+      "status": "unimplemented",
+      "pricing_note": "Placeholder tool. Charging is suspended by the decision on limitguard-ai#206 and drops to 0 when that ships; 0.10 until then."
+    }
+  ]
 }
