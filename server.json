@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "LimitGuard Trust Intelligence",
   "description": "Entity verification, sanctions screening, and trust scoring for AI agents via x402 micropayments.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "websiteUrl": "https://limitguard.ai",
   "repository": {
     "url": "https://github.com/jwconsultancyteam/limitguard-mcp",
@@ -19,7 +19,32 @@
   "tools": [
     {
       "name": "check_entity",
-      "description": "Full entity trust check — KVK/CBE registry, sanctions, domain, risk scoring",
+      "description": "Full trust intelligence check on a business entity. Returns trust score (0-100), risk level, and recommendation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entity_name": {
+            "type": "string",
+            "description": "Full legal name of the entity"
+          },
+          "country": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code"
+          },
+          "kvk_number": {
+            "type": "string",
+            "description": "Optional Dutch KVK number (8 digits)"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Optional company website domain"
+          }
+        },
+        "required": [
+          "entity_name",
+          "country"
+        ]
+      },
       "annotations": {
         "readOnlyHint": true,
         "destructiveHint": false,
@@ -29,7 +54,24 @@
     },
     {
       "name": "check_agent",
-      "description": "Verify AI agent identity and reputation before inter-agent transactions",
+      "description": "Verify AI agent trust. Checks if an AI agent is trusted based on its identifier.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "agent_id": {
+            "type": "string",
+            "description": "Unique agent identifier"
+          },
+          "agent_name": {
+            "type": "string",
+            "description": "Human-readable agent name"
+          }
+        },
+        "required": [
+          "agent_id",
+          "agent_name"
+        ]
+      },
       "annotations": {
         "readOnlyHint": true,
         "destructiveHint": false,
@@ -39,7 +81,19 @@
     },
     {
       "name": "get_trust_score",
-      "description": "Get entity trust score (0-100) with cluster assignment and recommendation",
+      "description": "Quick trust score lookup by entity ID. Returns cached score if available.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entity_id": {
+            "type": "string",
+            "description": "Entity identifier (KVK number, domain, or hash)"
+          }
+        },
+        "required": [
+          "entity_id"
+        ]
+      },
       "annotations": {
         "readOnlyHint": true,
         "destructiveHint": false,
@@ -49,7 +103,23 @@
     },
     {
       "name": "verify_wallet",
-      "description": "Verify blockchain wallet address, on-chain activity and risk flags",
+      "description": "Check wallet trust score for crypto payments. Supports EVM and Solana addresses.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "wallet_address": {
+            "type": "string",
+            "description": "Blockchain wallet address"
+          },
+          "chain_id": {
+            "type": "string",
+            "description": "CAIP-2 chain ID (default: eip155:8453 for Base)"
+          }
+        },
+        "required": [
+          "wallet_address"
+        ]
+      },
       "annotations": {
         "readOnlyHint": true,
         "destructiveHint": false,
@@ -59,7 +129,24 @@
     },
     {
       "name": "get_risk_score",
-      "description": "Quick risk score for entity name + country pair",
+      "description": "Quick risk assessment without full trust check. Focuses on risk signals only.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entity_name": {
+            "type": "string",
+            "description": "Full legal name of the entity"
+          },
+          "country": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code"
+          }
+        },
+        "required": [
+          "entity_name",
+          "country"
+        ]
+      },
       "annotations": {
         "readOnlyHint": true,
         "destructiveHint": false,
