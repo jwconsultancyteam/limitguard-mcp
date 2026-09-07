@@ -182,9 +182,16 @@ sending `Authorization: Bearer <key>` on every `tools/call`.
 
 | Endpoint | URL |
 |----------|-----|
+| MCP server card | [/.well-known/mcp/server-card.json](https://api.limitguard.ai/.well-known/mcp/server-card.json) |
 | MCP Tools | [/.well-known/mcp.json](https://api.limitguard.ai/.well-known/mcp.json) |
 | x402 Pricing | [/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json) |
 | Health | [/health](https://api.limitguard.ai/health) |
+
+The service publishes two tool cards, and they do not agree. Both list the same five
+tools, taking the same required arguments, so a `tools/call` written against either one
+works — but the descriptions and the argument wording differ between them. The Tools
+table above and this repository's `server.json` are generated from the **server card**,
+which is the one to read when the two disagree. Reconciling them is the service's to fix.
 
 ## Use Cases
 
