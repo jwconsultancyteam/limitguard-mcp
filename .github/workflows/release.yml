@@ -1,0 +1,89 @@
+name: Release
+
+# server.json's `version` is what MCP directories index, and CHANGELOG.md explains each
+# one. Neither is worth anything without a tag to point at, and the version is bumped by
+# a generator in jwconsultancyteam/limitguard-ai -- so tagging it by hand is a step that
+# gets skipped. This does it on the merge that carries the version, and releases only
+# when that version has no tag yet -- so the merges that touch these files without
+# bumping, and a re-run over the same commit, both do nothing.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server.json'
+      # A bump merged without its changelog section fails the notes step below, and the
+      # fix for that is a commit touching CHANGELOG.md alone. Under a server.json-only
+      # filter that commit re-triggers nothing, and the version stays unreleased for good.
+      - 'CHANGELOG.md'
+  # The same recovery path when the fix lands in neither file, or the job failed for a
+  # reason that has nothing to do with the merge that tripped it.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Read the published version
+        id: listing
+        run: |
+          set -euo pipefail
+          version="$(python3 -c 'import json; print(json.load(open("server.json"))["version"])')"
+          # A generator writes this field, so a malformed value reaches CI unreviewed --
+          # and from here it becomes a step output, a git tag and a release title. Bare
+          # MAJOR.MINOR.PATCH or nothing. [[ =~ ]] anchors against the whole string, so a
+          # value carrying a newline is rejected rather than matched line by line.
+          if [[ ! "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::server.json version '${version}' is not a bare MAJOR.MINOR.PATCH version."
+            exit 1
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          if git rev-parse -q --verify "refs/tags/v${version}" >/dev/null; then
+            echo "tagged=true" >> "$GITHUB_OUTPUT"
+            echo "v${version} is already released." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "tagged=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The section CHANGELOG.md already carries for this version, and nothing else. A
+      # version with no entry is a bump that skipped the changelog, which is worth
+      # failing over rather than releasing with empty notes.
+      - name: Take the release notes from the changelog
+        if: steps.listing.outputs.tagged == 'false'
+        env:
+          VERSION: ${{ steps.listing.outputs.version }}
+        run: |
+          set -euo pipefail
+          awk -v version="## [${VERSION}]" '
+            index($0, version) == 1 { inside = 1; next }
+            inside && /^## \[/ { exit }
+            inside { print }
+          ' CHANGELOG.md > "${RUNNER_TEMP}/notes.md"
+          # -s only proves the file has bytes: a heading with an empty body under it awks
+          # out to a couple of newlines and passes. What decides it is whether there is
+          # anything to actually read.
+          if ! grep -q '[^[:space:]]' "${RUNNER_TEMP}/notes.md"; then
+            echo "::error::CHANGELOG.md has no '## [${VERSION}]' section to release from."
+            exit 1
+          fi
+
+      - name: Release
+        if: steps.listing.outputs.tagged == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.listing.outputs.version }}
+        run: |
+          set -euo pipefail
+          gh release create "v${VERSION}" --title "v${VERSION}" \
+            --notes-file "${RUNNER_TEMP}/notes.md" --target "${GITHUB_SHA}"

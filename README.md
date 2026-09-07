@@ -13,11 +13,11 @@ the names it returns, and the names `tools/call` accepts:
 
 | Tool | Description | Inputs |
 |------|-------------|--------|
-| `check_entity` | Full entity trust check — KVK/CBE registry, sanctions, domain, risk scoring | `entity_name` (required), `country` (required), `kvk_number`, `domain` |
-| `check_agent` | Verify AI agent identity and reputation before inter-agent transactions | `agent_id` (required), `agent_name` (required) |
-| `get_trust_score` | Get entity trust score (0-100) with cluster assignment and recommendation | `entity_id` (required) |
-| `verify_wallet` | Verify blockchain wallet address, on-chain activity and risk flags | `wallet_address` (required), `chain_id` |
-| `get_risk_score` | Quick risk score for entity name + country pair | `entity_name` (required), `country` (required) |
+| `check_entity` | Full trust intelligence check on a business entity. Returns trust score (0-100), risk level, and recommendation. | `entity_name` (required), `country` (required), `kvk_number`, `domain` |
+| `check_agent` | Verify AI agent trust. Checks if an AI agent is trusted based on its identifier. | `agent_id` (required), `agent_name` (required) |
+| `get_trust_score` | Quick trust score lookup by entity ID. Returns cached score if available. | `entity_id` (required) |
+| `verify_wallet` | Check wallet trust score for crypto payments. Supports EVM and Solana addresses. | `wallet_address` (required), `chain_id` |
+| `get_risk_score` | Quick risk assessment without full trust check. Focuses on risk signals only. | `entity_name` (required), `country` (required) |
 
 ## Pricing
 
@@ -65,7 +65,7 @@ are listed by `/.well-known/mcp.json`.
 Most of the REST endpoints are capabilities the MCP tools do not expose, but two are the same
 check reached over plain HTTP: `/v1/entity/check` behind `check_entity` — the manifest describes
 `/v1/mcp/check-entity` as "same as `/v1/entity/check` with MCP-native interface" — and
-`/v1/risk/score` behind `risk_score`, at the same $0.65.
+`/v1/risk/score` behind `get_risk_score`, at the same $0.65.
 
 Payment works the same way throughout: USDC on Base or Solana, pay-per-call. The 9 data endpoints
 below need no API key at all. The 4 `/v1/keys/upgrade/*` endpoints also take payment without one,
@@ -110,9 +110,9 @@ MCP session.
 |----------|--------|-------|----------|
 | `/v1/mcp/check-entity` | POST | $0.85 | `check_entity` |
 | `/v1/mcp/check-agent` | POST | $0.10 | `check_agent` |
-| `/v1/mcp/trust-score` | POST | $0.10 | `trust_score` |
+| `/v1/mcp/trust-score` | POST | $0.10 | `get_trust_score` |
 | `/v1/mcp/verify-wallet` | GET | $0.10 | `verify_wallet` |
-| `/v1/mcp/risk-score` | POST | $0.65 | `risk_score` |
+| `/v1/mcp/risk-score` | POST | $0.65 | `get_risk_score` |
 
 ### API key tiers
 
@@ -182,9 +182,16 @@ sending `Authorization: Bearer <key>` on every `tools/call`.
 
 | Endpoint | URL |
 |----------|-----|
+| MCP server card | [/.well-known/mcp/server-card.json](https://api.limitguard.ai/.well-known/mcp/server-card.json) |
 | MCP Tools | [/.well-known/mcp.json](https://api.limitguard.ai/.well-known/mcp.json) |
 | x402 Pricing | [/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json) |
 | Health | [/health](https://api.limitguard.ai/health) |
+
+The service publishes two tool cards, and they do not agree. Both list the same five
+tools, taking the same required arguments, so a `tools/call` written against either one
+works — but the descriptions and the argument wording differ between them. The Tools
+table above and this repository's `server.json` are generated from the **server card**,
+which is the one to read when the two disagree. Reconciling them is the service's to fix.
 
 ## Use Cases
 
