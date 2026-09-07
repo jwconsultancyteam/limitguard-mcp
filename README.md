@@ -117,9 +117,16 @@ MCP session.
 ### API key tiers
 
 LimitGuard accepts two forms of payment: x402 per call — which needs no API key, as everywhere
-else in this README — or an API key carrying a monthly call allowance. A base key is free and
-self-service: `POST /v1/keys/create` with an email address, no payment and no existing key needed.
-The endpoints below take a one-time x402 payment to raise that key's monthly allowance.
+else in this README — or a **paid-tier** API key, whose subscription prepays the calls.
+
+A base key is free and self-service: `POST /v1/keys/create` with an email address, no payment and
+no existing key needed. It identifies you and tracks your usage; it does **not** pay for calls. A
+`free`-tier key still owes x402 on every paid endpoint, on REST exactly as on MCP. The
+`monthly_limit` it reports is a ceiling on how many calls it may make, not an allowance of free
+ones. A `sandbox` key is also free and returns mock data, never a real check.
+
+The endpoints below take a one-time x402 payment to move a key onto a paid tier, which is what
+lifts the per-call charge.
 
 | Endpoint | Method | Price | Tier | Allowance |
 |----------|--------|-------|------|-----------|
