@@ -32,6 +32,76 @@ section: a change is released here at the moment it is merged.
 - Tool `get_trust_score` description updated.
 - Tool `verify_wallet` description updated.
 
+## [1.2.2] - 2026-09-08
+
+### Added
+
+`glama.json` gained an `auth` block, a `pricing` block and a `tools` array: the five tool
+names with their inputs, their per-call USDC price, and a `status`. Prices and
+descriptions only, so this is a patch by the table above. The Glama schema this file
+declares formally defines one property, `maintainers`, and permits the rest, so whether
+the directory renders any of these blocks is unverified; the file is written to be true
+for whoever reads it either way.
+
+- The three tools that return placeholder data (`check_agent`, `get_trust_score`,
+  `verify_wallet`) are marked `"status": "unimplemented"` and say so in their
+  descriptions. That disclosure is in this file alone. `server.json`, `smithery.yaml` and
+  the README still present all five as working, and the registry and Smithery read those,
+  so an agent arriving by any route other than Glama is not yet told.
+
+### Fixed
+
+- `glama.json` listed `eip155:84532` (Base Sepolia) as a settlement network beside the two
+  mainnets, with nothing marking it a testnet. The x402 manifest it names as its own
+  source of truth carries two chains under `payment.chains`, both mainnet, and reports
+  testnet support in a separate `testnet_supported` flag without naming a chain. The
+  network list now mirrors those two and carries the flag.
+- The `auth` block told agents to send `Bearer <lg_live_...>`. `POST /v1/keys/create`
+  returns an `lg_live_` key on the default free tier but an `lg_sandbox_` key when the
+  body asks for `"tier": "sandbox"` -- which is what the README's own example asks for.
+  Both authenticate; only the server's error string still names `lg_live_`. Both prefixes
+  and the request that produces each are stated now.
+- Each placeholder's pricing note said charging "is suspended" while the same entry
+  priced the tool at 0.10. limitguard-ai#206 decided on the suspension; the code has not
+  shipped, and the live manifest still prices all three at 0.10. The note now separates
+  the decision from what the API currently charges.
+
+### Note
+
+This entry was written by hand. The header above says entries from 1.2.0 onward come from
+`scripts/sync_public_repos.py`, and that generator did not produce this one: the change is
+`glama.json`-only, and the release workflow's path filter covers `server.json` and
+`CHANGELOG.md`, so a `glama.json`-only merge bumps and releases nothing. The version bump
+and this section are what make the change reach the tag.
+
+## [1.2.1] - 2026-09-07
+
+### Fixed
+
+- "API key tiers" said an API key carries a monthly call allowance. A `free`-tier key is
+  identity and usage tracking: it owes x402 on every paid endpoint, on REST exactly as on
+  MCP, and the `monthly_limit` it reports is a ceiling on calls rather than a grant of free
+  ones. REST enforced none of that until limitguard-ai#223 closed the bypass.
+- The `POST /v1/keys/create` example asked for `"tier": "sandbox"`, and the Quick Start
+  configs then wired that key into `Authorization: Bearer`. A reader following the README
+  end to end paid x402 for mock answers. The example creates the `free` key those configs
+  expect, and what a sandbox key is for is stated where it is offered.
+- Authentication step 2 said a sandbox key lifts the payment requirement on the `/v1/mcp/*`
+  REST mirrors, "the cheapest way to try the tools before wiring up payment". Those mirrors
+  answer a sandbox key with mock data, not a discounted real check -- the sandbox response
+  is served before the payment check -- and on MCP a sandbox key pays like any other free
+  key. Both halves are now said plainly.
+- "x402 per call -- which needs no API key, as everywhere else in this README" held for 13
+  of the 18 endpoints. The MCP transport takes a Bearer key on every `tools/call` and the
+  five `/v1/mcp/*` mirrors take `X-API-Key`; the section now counts them.
+- The upgrade table's "Allowance" column is `monthly_limit`, the field the API returns. The
+  paragraph above it defines an allowance as free calls, which is the one thing a base key
+  does not get, so the column contradicted the prose it sat under.
+- The upgrade prices sat between "subscription prepays the calls" and "a one-time x402
+  payment", against a table counting calls per month, without saying whether the price
+  recurs. The manifest prices the upgrade call and says nothing about the month after, and
+  the README now says so rather than implying either reading.
+
 ## [1.2.0] - 2026-09-07
 
 ### Changed
