@@ -25,6 +25,13 @@ Entries from 1.2.0 onward are written by `scripts/sync_public_repos.py` in
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [1.3.0] - 2026-09-08
+
+### Changed
+- Tool `check_agent` description updated.
+- Tool `get_trust_score` description updated.
+- Tool `verify_wallet` description updated.
+
 ## [1.2.2] - 2026-09-08
 
 ### Added

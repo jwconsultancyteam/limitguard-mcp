@@ -37,25 +37,25 @@
       "name": "check_agent",
       "description": "Verify AI agent trust. Checks if an AI agent is trusted based on its identifier. Unimplemented / beta: returns placeholder data.",
       "inputs": ["agent_id (required)", "agent_name (required)"],
-      "price_usdc": 0.10,
+      "price_usdc": 0.00,
       "status": "unimplemented",
-      "pricing_note": "Placeholder tool. limitguard-ai#206 decided to suspend charging for it, but that change has not shipped: the manifest still prices this tool at 0.10 and the API still charges it. The price drops to 0 when #206 ships."
+      "pricing_note": "Placeholder tool, now free: limitguard-ai#206 shipped, so the API no longer charges for it and the x402 manifest no longer lists this path among its priced endpoints."
     },
     {
       "name": "get_trust_score",
       "description": "Quick trust score lookup by entity ID. Returns cached score if available. Unimplemented / beta: returns placeholder data.",
       "inputs": ["entity_id (required)"],
-      "price_usdc": 0.10,
+      "price_usdc": 0.00,
       "status": "unimplemented",
-      "pricing_note": "Placeholder tool. limitguard-ai#206 decided to suspend charging for it, but that change has not shipped: the manifest still prices this tool at 0.10 and the API still charges it. The price drops to 0 when #206 ships."
+      "pricing_note": "Placeholder tool, now free: limitguard-ai#206 shipped, so the API no longer charges for it and the x402 manifest no longer lists this path among its priced endpoints."
     },
     {
       "name": "verify_wallet",
       "description": "Check wallet trust score for crypto payments. Supports EVM and Solana addresses. Unimplemented / beta: returns placeholder data.",
       "inputs": ["wallet_address (required)", "chain_id"],
-      "price_usdc": 0.10,
+      "price_usdc": 0.00,
       "status": "unimplemented",
-      "pricing_note": "Placeholder tool. limitguard-ai#206 decided to suspend charging for it, but that change has not shipped: the manifest still prices this tool at 0.10 and the API still charges it. The price drops to 0 when #206 ships."
+      "pricing_note": "Placeholder tool, now free: limitguard-ai#206 shipped, so the API no longer charges for it and the x402 manifest no longer lists this path among its priced endpoints."
     }
   ]
 }
