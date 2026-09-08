@@ -14,9 +14,9 @@ the names it returns, and the names `tools/call` accepts:
 | Tool | Description | Inputs |
 |------|-------------|--------|
 | `check_entity` | Full trust intelligence check on a business entity. Returns trust score (0-100), risk level, and recommendation. | `entity_name` (required), `country` (required), `kvk_number`, `domain` |
-| `check_agent` | Verify AI agent trust. Checks if an AI agent is trusted based on its identifier. | `agent_id` (required), `agent_name` (required) |
-| `get_trust_score` | Quick trust score lookup by entity ID. Returns cached score if available. | `entity_id` (required) |
-| `verify_wallet` | Check wallet trust score for crypto payments. Supports EVM and Solana addresses. | `wallet_address` (required), `chain_id` |
+| `check_agent` | Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Verify AI agent trust. Checks if an AI agent is trusted based on its identifier. | `agent_id` (required), `agent_name` (required) |
+| `get_trust_score` | Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Quick trust score lookup by entity ID. Returns cached score if available. | `entity_id` (required) |
+| `verify_wallet` | Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Check wallet trust score for crypto payments. Supports EVM and Solana addresses. | `wallet_address` (required), `chain_id` |
 | `get_risk_score` | Quick risk assessment without full trust check. Focuses on risk signals only. | `entity_name` (required), `country` (required) |
 
 ## Pricing
@@ -109,9 +109,9 @@ MCP session.
 | Endpoint | Method | Price | MCP tool |
 |----------|--------|-------|----------|
 | `/v1/mcp/check-entity` | POST | $0.85 | `check_entity` |
-| `/v1/mcp/check-agent` | POST | $0.10 | `check_agent` |
-| `/v1/mcp/trust-score` | POST | $0.10 | `get_trust_score` |
-| `/v1/mcp/verify-wallet` | GET | $0.10 | `verify_wallet` |
+| `/v1/mcp/check-agent` | POST | $0.00 | `check_agent` |
+| `/v1/mcp/trust-score` | POST | $0.00 | `get_trust_score` |
+| `/v1/mcp/verify-wallet` | POST | $0.00 | `verify_wallet` |
 | `/v1/mcp/risk-score` | POST | $0.65 | `get_risk_score` |
 
 ### API key tiers
@@ -123,10 +123,10 @@ The endpoints below take a one-time x402 payment to raise that key's monthly all
 
 | Endpoint | Method | Price | Tier | Allowance |
 |----------|--------|-------|------|-----------|
-| `/v1/keys/upgrade/indie` | GET | $29 | Indie | 1,000 calls/mo |
-| `/v1/keys/upgrade/starter` | GET | $99 | Starter | 10,000 calls/mo |
-| `/v1/keys/upgrade/growth` | GET | $299 | Growth | 50,000 calls/mo |
-| `/v1/keys/upgrade/pro` | GET | $999 | Pro | 250,000 calls/mo |
+| `/v1/keys/upgrade/indie` | POST | $29 | Indie | 1,000 calls/mo |
+| `/v1/keys/upgrade/starter` | POST | $99 | Starter | 10,000 calls/mo |
+| `/v1/keys/upgrade/growth` | POST | $299 | Growth | 50,000 calls/mo |
+| `/v1/keys/upgrade/pro` | POST | $999 | Pro | 250,000 calls/mo |
 
 Prices and descriptions above mirror the live x402 manifest as of 2026-09-05. The manifest is the
 source of truth — fetch it if you need the current schema for any endpoint.
