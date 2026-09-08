@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "LimitGuard Trust Intelligence",
   "description": "Entity verification, sanctions screening, and trust scoring for AI agents via x402 micropayments.",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "websiteUrl": "https://limitguard.ai",
   "repository": {
     "url": "https://github.com/jwconsultancyteam/limitguard-mcp",
@@ -54,7 +54,7 @@
     },
     {
       "name": "check_agent",
-      "description": "Verify AI agent trust. Checks if an AI agent is trusted based on its identifier.",
+      "description": "Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Verify AI agent trust. Checks if an AI agent is trusted based on its identifier.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -81,7 +81,7 @@
     },
     {
       "name": "get_trust_score",
-      "description": "Quick trust score lookup by entity ID. Returns cached score if available.",
+      "description": "Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Quick trust score lookup by entity ID. Returns cached score if available.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -103,7 +103,7 @@
     },
     {
       "name": "verify_wallet",
-      "description": "Check wallet trust score for crypto payments. Supports EVM and Solana addresses.",
+      "description": "Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Check wallet trust score for crypto payments. Supports EVM and Solana addresses.",
       "inputSchema": {
         "type": "object",
         "properties": {
