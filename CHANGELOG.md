@@ -25,7 +25,7 @@ Entries from 1.2.0 onward are written by `scripts/sync_public_repos.py` in
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
-## [1.2.1] - 2026-09-08
+## [1.2.2] - 2026-09-08
 
 ### Added
 
@@ -66,6 +66,34 @@ This entry was written by hand. The header above says entries from 1.2.0 onward 
 `glama.json`-only, and the release workflow's path filter covers `server.json` and
 `CHANGELOG.md`, so a `glama.json`-only merge bumps and releases nothing. The version bump
 and this section are what make the change reach the tag.
+
+## [1.2.1] - 2026-09-07
+
+### Fixed
+
+- "API key tiers" said an API key carries a monthly call allowance. A `free`-tier key is
+  identity and usage tracking: it owes x402 on every paid endpoint, on REST exactly as on
+  MCP, and the `monthly_limit` it reports is a ceiling on calls rather than a grant of free
+  ones. REST enforced none of that until limitguard-ai#223 closed the bypass.
+- The `POST /v1/keys/create` example asked for `"tier": "sandbox"`, and the Quick Start
+  configs then wired that key into `Authorization: Bearer`. A reader following the README
+  end to end paid x402 for mock answers. The example creates the `free` key those configs
+  expect, and what a sandbox key is for is stated where it is offered.
+- Authentication step 2 said a sandbox key lifts the payment requirement on the `/v1/mcp/*`
+  REST mirrors, "the cheapest way to try the tools before wiring up payment". Those mirrors
+  answer a sandbox key with mock data, not a discounted real check -- the sandbox response
+  is served before the payment check -- and on MCP a sandbox key pays like any other free
+  key. Both halves are now said plainly.
+- "x402 per call -- which needs no API key, as everywhere else in this README" held for 13
+  of the 18 endpoints. The MCP transport takes a Bearer key on every `tools/call` and the
+  five `/v1/mcp/*` mirrors take `X-API-Key`; the section now counts them.
+- The upgrade table's "Allowance" column is `monthly_limit`, the field the API returns. The
+  paragraph above it defines an allowance as free calls, which is the one thing a base key
+  does not get, so the column contradicted the prose it sat under.
+- The upgrade prices sat between "subscription prepays the calls" and "a one-time x402
+  payment", against a table counting calls per month, without saying whether the price
+  recurs. The manifest prices the upgrade call and says nothing about the month after, and
+  the README now says so rather than implying either reading.
 
 ## [1.2.0] - 2026-09-07
 
