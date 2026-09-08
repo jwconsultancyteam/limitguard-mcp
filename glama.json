@@ -8,14 +8,15 @@
   "maintainers": ["jwconsultancyteam"],
   "auth": {
     "rest": "x402 pay-per-call, no API key, no signup",
-    "mcp": "Authorization: Bearer <lg_live_...>; create a key free at POST https://api.limitguard.ai/v1/keys/create; free and sandbox tiers also send PAYMENT-SIGNATURE or X-PAYMENT per call; paid tiers (indie and up) need no per-call payment",
+    "mcp": "Authorization: Bearer <key>; create one free at POST https://api.limitguard.ai/v1/keys/create, which returns an lg_live_ key on the default free tier and an lg_sandbox_ key when the body asks for \"tier\": \"sandbox\". Both authenticate, though the server's own error text names only lg_live_. Free and sandbox tiers also send PAYMENT-SIGNATURE or X-PAYMENT per call; paid tiers (indie and up) need no per-call payment",
     "documentation": "https://docs.limitguard.ai/authentication"
   },
   "pricing": {
     "currency": "USDC",
-    "networks": ["eip155:8453", "eip155:84532", "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"],
+    "networks": ["eip155:8453", "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"],
+    "testnet_supported": true,
     "source_of_truth": "https://api.limitguard.ai/.well-known/x402.json",
-    "note": "Prices below mirror mcp_server/tier.py in limitguard-ai as of 2026-09-07. The x402 manifest is authoritative; fetch it for current values."
+    "note": "Networks mirror payment.chains in the x402 manifest, which names these two mainnets and sets testnet_supported without naming a testnet chain. Prices below mirror mcp_server/tier.py in limitguard-ai as of 2026-09-07. The x402 manifest is authoritative; fetch it for current values."
   },
   "tools": [
     {
@@ -38,7 +39,7 @@
       "inputs": ["agent_id (required)", "agent_name (required)"],
       "price_usdc": 0.10,
       "status": "unimplemented",
-      "pricing_note": "Placeholder tool. Charging is suspended by the decision on limitguard-ai#206 and drops to 0 when that ships; 0.10 until then."
+      "pricing_note": "Placeholder tool. limitguard-ai#206 decided to suspend charging for it, but that change has not shipped: the manifest still prices this tool at 0.10 and the API still charges it. The price drops to 0 when #206 ships."
     },
     {
       "name": "get_trust_score",
@@ -46,7 +47,7 @@
       "inputs": ["entity_id (required)"],
       "price_usdc": 0.10,
       "status": "unimplemented",
-      "pricing_note": "Placeholder tool. Charging is suspended by the decision on limitguard-ai#206 and drops to 0 when that ships; 0.10 until then."
+      "pricing_note": "Placeholder tool. limitguard-ai#206 decided to suspend charging for it, but that change has not shipped: the manifest still prices this tool at 0.10 and the API still charges it. The price drops to 0 when #206 ships."
     },
     {
       "name": "verify_wallet",
@@ -54,7 +55,7 @@
       "inputs": ["wallet_address (required)", "chain_id"],
       "price_usdc": 0.10,
       "status": "unimplemented",
-      "pricing_note": "Placeholder tool. Charging is suspended by the decision on limitguard-ai#206 and drops to 0 when that ships; 0.10 until then."
+      "pricing_note": "Placeholder tool. limitguard-ai#206 decided to suspend charging for it, but that change has not shipped: the manifest still prices this tool at 0.10 and the API still charges it. The price drops to 0 when #206 ships."
     }
   ]
 }

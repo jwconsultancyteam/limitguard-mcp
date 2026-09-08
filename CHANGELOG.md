@@ -25,6 +25,48 @@ Entries from 1.2.0 onward are written by `scripts/sync_public_repos.py` in
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [1.2.1] - 2026-09-08
+
+### Added
+
+`glama.json` gained an `auth` block, a `pricing` block and a `tools` array: the five tool
+names with their inputs, their per-call USDC price, and a `status`. Prices and
+descriptions only, so this is a patch by the table above. The Glama schema this file
+declares formally defines one property, `maintainers`, and permits the rest, so whether
+the directory renders any of these blocks is unverified; the file is written to be true
+for whoever reads it either way.
+
+- The three tools that return placeholder data (`check_agent`, `get_trust_score`,
+  `verify_wallet`) are marked `"status": "unimplemented"` and say so in their
+  descriptions. That disclosure is in this file alone. `server.json`, `smithery.yaml` and
+  the README still present all five as working, and the registry and Smithery read those,
+  so an agent arriving by any route other than Glama is not yet told.
+
+### Fixed
+
+- `glama.json` listed `eip155:84532` (Base Sepolia) as a settlement network beside the two
+  mainnets, with nothing marking it a testnet. The x402 manifest it names as its own
+  source of truth carries two chains under `payment.chains`, both mainnet, and reports
+  testnet support in a separate `testnet_supported` flag without naming a chain. The
+  network list now mirrors those two and carries the flag.
+- The `auth` block told agents to send `Bearer <lg_live_...>`. `POST /v1/keys/create`
+  returns an `lg_live_` key on the default free tier but an `lg_sandbox_` key when the
+  body asks for `"tier": "sandbox"` -- which is what the README's own example asks for.
+  Both authenticate; only the server's error string still names `lg_live_`. Both prefixes
+  and the request that produces each are stated now.
+- Each placeholder's pricing note said charging "is suspended" while the same entry
+  priced the tool at 0.10. limitguard-ai#206 decided on the suspension; the code has not
+  shipped, and the live manifest still prices all three at 0.10. The note now separates
+  the decision from what the API currently charges.
+
+### Note
+
+This entry was written by hand. The header above says entries from 1.2.0 onward come from
+`scripts/sync_public_repos.py`, and that generator did not produce this one: the change is
+`glama.json`-only, and the release workflow's path filter covers `server.json` and
+`CHANGELOG.md`, so a `glama.json`-only merge bumps and releases nothing. The version bump
+and this section are what make the change reach the tag.
+
 ## [1.2.0] - 2026-09-07
 
 ### Changed
