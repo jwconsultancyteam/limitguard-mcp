@@ -6,6 +6,8 @@ Trust Intelligence for AI agents. Entity verification, sanctions screening, and 
 **Transport:** Streamable HTTP (POST)
 **Auth:** API key (Bearer), plus an x402 micropayment per call on the free and sandbox tiers
 
+**Start here:** Free sandbox key, no wallet. $0.65-0.85 fresh; $0.10 cached when available.
+
 ## Tools
 
 `tools/list` is public — connect and read it without any credential. These are
