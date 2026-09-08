@@ -234,7 +234,7 @@ which is the one to read when the two disagree. Reconciling them is the service'
 
 - **Website:** [limitguard.ai](https://limitguard.ai)
 - **Status:** [status.limitguard.ai](https://status.limitguard.ai)
-- **MCP Registry:** [ai.limitguard.api/trust-intelligence](https://registry.modelcontextprotocol.io/servers/ai.limitguard.api/trust-intelligence)
+- **MCP Registry:** [ai.limitguard.api/trust-intelligence](https://registry.modelcontextprotocol.io/v0/servers/ai.limitguard.api%2Ftrust-intelligence/versions/latest) (JSON; the registry has no HTML page per server)
 
 ## License
 
