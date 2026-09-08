@@ -4,7 +4,7 @@ Trust Intelligence for AI agents. Entity verification, sanctions screening, and 
 
 **Server URL:** `https://api.limitguard.ai/mcp`
 **Transport:** Streamable HTTP (POST)
-**Auth:** API key (Bearer), plus an x402 micropayment per call on the free tier
+**Auth:** API key (Bearer), plus an x402 micropayment per call on the free and sandbox tiers
 
 ## Tools
 
@@ -42,16 +42,24 @@ Two things gate a `tools/call`, in this order:
    ```bash
    curl -X POST https://api.limitguard.ai/v1/keys/create \
      -H "Content-Type: application/json" \
-     -d '{"email": "you@example.com", "tier": "sandbox"}'
+     -d '{"email": "you@example.com"}'
    ```
+
+   That returns a `free`-tier key, which is the key the Quick Start configs below
+   expect. Asking for `"tier": "sandbox"` instead returns a key that answers with
+   mock data — see the next point before you use one here.
 
 2. **Payment, on the free and sandbox tiers only.** Send the x402 proof as
    `PAYMENT-SIGNATURE` (x402 v2) or `X-PAYMENT` (v1), alongside the Bearer key.
    A paid subscription (indie and up) covers usage and needs no per-call payment.
 
-   A sandbox key does *not* lift the payment requirement on this transport. It
-   does on the REST mirrors under `/v1/mcp/*` (sent as `X-API-Key`, not Bearer),
-   which is the cheapest way to try the tools before wiring up payment.
+   A sandbox key does *not* lift the payment requirement on this transport: it
+   owes x402 per call exactly as a `free` key does, and it answers with mock
+   data rather than a real check. Paying for one over MCP spends real USDC on a
+   mock answer. Where a sandbox key is worth having is the REST mirrors under
+   `/v1/mcp/*` (sent as `X-API-Key`, not Bearer), which serve the mock response
+   before the payment check — a way to exercise the request and response shapes,
+   not a cheap source of real checks.
 
 ## Full x402 API (direct HTTP)
 
@@ -116,13 +124,26 @@ MCP session.
 
 ### API key tiers
 
-LimitGuard accepts two forms of payment: x402 per call — which needs no API key, as everywhere
-else in this README — or an API key carrying a monthly call allowance. A base key is free and
-self-service: `POST /v1/keys/create` with an email address, no payment and no existing key needed.
-The endpoints below take a one-time x402 payment to raise that key's monthly allowance.
+LimitGuard accepts two forms of payment: x402 per call, or a **paid-tier** API key whose
+subscription prepays the calls. Paying per call needs no API key on 13 of the 18 endpoints — the
+9 data endpoints above and the 4 `/v1/keys/upgrade/*` paths. The other 5 always want a key: the
+MCP transport takes `Authorization: Bearer` on every `tools/call`, and its `/v1/mcp/*` mirrors
+take `X-API-Key`.
 
-| Endpoint | Method | Price | Tier | Allowance |
-|----------|--------|-------|------|-----------|
+A base key is free and self-service: `POST /v1/keys/create` with an email address, no payment and
+no existing key needed. It identifies you and tracks your usage; it does **not** pay for calls. A
+`free`-tier key still owes x402 on every paid endpoint, on REST exactly as on MCP. The
+`monthly_limit` it reports is a ceiling on how many calls it may make, not an allowance of free
+ones. A `sandbox` key is also free and returns mock data, never a real check — over MCP it owes
+x402 like any other free key, so it earns its keep only against the REST mirrors.
+
+The endpoints below take an x402 payment to move a key onto a paid tier, which is what lifts the
+per-call charge. On a paid tier `monthly_limit` is the number of calls the subscription covers.
+The manifest prices the upgrade call itself and says nothing about what happens at the end of a
+month, so confirm the renewal terms before budgeting against the figures below.
+
+| Endpoint | Method | Price | Tier | `monthly_limit` |
+|----------|--------|-------|------|-----------------|
 | `/v1/keys/upgrade/indie` | GET | $29 | Indie | 1,000 calls/mo |
 | `/v1/keys/upgrade/starter` | GET | $99 | Starter | 10,000 calls/mo |
 | `/v1/keys/upgrade/growth` | GET | $299 | Growth | 50,000 calls/mo |
