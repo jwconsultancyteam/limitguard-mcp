@@ -29,7 +29,10 @@ concurrency:
 
 jobs:
   tag:
-    runs-on: ubuntu-latest
+    # GitHub-hosted billing is dead for this org; every job that can move to the
+    # org's shared self-hosted pool has (limitguard-ai #410/#411, walker-brain,
+    # silou, archon-walker). No Docker, no required-check role -- safe to move.
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
