@@ -1,4 +1,4 @@
-name: limitguard/trust-intelligence
+name: team-mehs/limitguard
 description: Trust Intelligence for AI agents — entity verification, sanctions screening, and risk scoring via x402 micropayments
 startCommand:
   type: http
