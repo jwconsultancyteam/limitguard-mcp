@@ -29,10 +29,22 @@ concurrency:
 
 jobs:
   tag:
-    # GitHub-hosted billing is dead for this org; every job that can move to the
-    # org's shared self-hosted pool has (limitguard-ai #410/#411, walker-brain,
-    # silou, archon-walker). No Docker, no required-check role -- safe to move.
-    runs-on: self-hosted
+    # Reverted from self-hosted (#16): this repo's Actions runs are not actually
+    # granted access to the org's shared self-hosted runner group -- the org
+    # runner group's visibility is "all", but the dispatched job never resolved a
+    # runner_group_id (stayed 0/null with all 6 pool runners idle) instead of
+    # matching in seconds like every other repo's jobs do. That is a per-repo
+    # Actions/runner-group setting, not something fixable from here.
+    #
+    # ubuntu-latest is ALSO currently broken (GitHub Actions billing is dead for
+    # this org: jobs fail in ~3s, "recent account payments have failed"), but a
+    # fast, clearly-labeled billing failure is a better failure mode than a
+    # self-hosted job that queues forever with no runner ever picking it up.
+    # Move back to self-hosted once an org/repo admin has granted this repo
+    # access to the runner group -- confirm first with a workflow_dispatch and
+    # check the job's runner_group_id is non-null/non-zero, not just that the
+    # workflow runs green.
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
