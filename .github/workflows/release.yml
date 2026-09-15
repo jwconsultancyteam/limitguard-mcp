@@ -173,6 +173,26 @@ jobs:
             exit 1
           fi
 
+      # `login http` signs the current time, and the registry rejects a signature whose
+      # timestamp is more than 15 seconds from its own clock. The first run of this job
+      # (2026-09-15) failed exactly there: the self-hosted runner's clock was about two
+      # minutes behind. That 401 says nothing about clocks, so measure the skew against
+      # the registry's own Date header first and name the actual fix.
+      - name: Refuse to continue if the runner's clock is off
+        if: steps.registry.outputs.published == 'false'
+        run: |
+          set -euo pipefail
+          registry_date="$(curl -sS --max-time 30 --retry 3 --retry-delay 5 -o /dev/null -D - \
+            "${REGISTRY_URL}/v0.1/health" | awk 'tolower($1) == "date:" { sub(/^[Dd]ate: /, ""); sub(/\r$/, ""); print }')"
+          registry_epoch="$(date -u -d "${registry_date}" +%s)"
+          runner_epoch="$(date -u +%s)"
+          skew=$(( runner_epoch - registry_epoch ))
+          if (( skew > 10 || skew < -10 )); then
+            echo "::error::This runner's clock is ${skew}s off the registry's (runner $(date -u +%FT%TZ), registry ${registry_date}). The registry rejects login signatures more than 15s from its clock, so publishing cannot work until NTP is fixed on the self-hosted runner. Fix the clock and re-run this workflow, or publish once by hand: 'mcp-publisher login http --domain api.limitguard.ai --private-key <hex> && mcp-publisher publish server.json'."
+            exit 1
+          fi
+          echo "Runner clock within ${skew}s of the registry."
+
       - name: Install mcp-publisher
         if: steps.registry.outputs.published == 'false'
         run: |
