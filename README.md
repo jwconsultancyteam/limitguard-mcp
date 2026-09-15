@@ -27,11 +27,11 @@ All tools are priced via [x402](https://www.x402.org/) micropayments (USDC on Ba
 
 | Endpoint | Price |
 |----------|-------|
-| Entity Check | $0.85 |
-| Risk Score | $0.65 |
-| Check Agent | $0.10 |
-| Trust Score | $0.10 |
-| Verify Wallet | $0.10 |
+| Entity Check (`/v1/mcp/check-entity`) | $0.85 |
+| Risk Score (`/v1/mcp/risk-score`) | $0.65 |
+| Check Agent (`/v1/mcp/check-agent`) | $0.00 — unimplemented / beta, placeholder data |
+| Trust Score (`/v1/mcp/trust-score`) | $0.00 — unimplemented / beta, placeholder data |
+| Verify Wallet (`/v1/mcp/verify-wallet`) | $0.00 — unimplemented / beta, placeholder data |
 
 ## Authentication
 
