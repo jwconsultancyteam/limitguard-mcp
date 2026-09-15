@@ -114,7 +114,10 @@ jobs:
     # `needs: tag` is deliberate: a bump whose changelog section is missing fails `tag`,
     # and the registry should not get ahead of a GitHub release that was refused.
     needs: tag
-    runs-on: self-hosted
+    # `Install mcp-publisher` downloads the linux_arm64 build unconditionally, so this job
+    # only works on an ARM64 runner. ARM64 is a label every self-hosted runner applies to
+    # itself from its architecture, so this pins the pair rather than adding a requirement.
+    runs-on: [self-hosted, ARM64]
     permissions:
       contents: read
     env:
@@ -134,6 +137,13 @@ jobs:
         run: |
           set -euo pipefail
           name="$(python3 -c 'import json; print(json.load(open("server.json"))["name"])')"
+          # Anchored for the same reason `tag` anchors the version: a generator writes this
+          # field, and from here it becomes a step output. A value carrying a newline would
+          # write further lines into $GITHUB_OUTPUT rather than being rejected.
+          if [[ ! "${name}" =~ ^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$ ]]; then
+            echo "::error::server.json name '${name}' is not a registry namespace/name value."
+            exit 1
+          fi
           # The name carries a '/', which the registry's path wants as %2F.
           encoded="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${name}")"
           echo "name=${name}" >> "$GITHUB_OUTPUT"
@@ -182,8 +192,11 @@ jobs:
         if: steps.registry.outputs.published == 'false'
         run: |
           set -euo pipefail
+          # -D - dumps the headers of every response, and --retry means a 503 that retries
+          # into a 200 produces one Date line per attempt. `date -d` refuses a multi-line
+          # value, so keep only the last -- the response that actually answered.
           registry_date="$(curl -sS --max-time 30 --retry 3 --retry-delay 5 -o /dev/null -D - \
-            "${REGISTRY_URL}/v0.1/health" | awk 'tolower($1) == "date:" { sub(/^[Dd]ate: /, ""); sub(/\r$/, ""); print }')"
+            "${REGISTRY_URL}/v0.1/health" | awk 'tolower($1) == "date:" { sub(/^[Dd]ate: /, ""); sub(/\r$/, ""); last = $0 } END { if (last != "") print last }')"
           if [ -z "${registry_date}" ]; then
             echo "::error::${REGISTRY_URL}/v0.1/health did not return a Date header; cannot check the runner's clock against it."
             exit 1
