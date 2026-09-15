@@ -6,6 +6,12 @@ name: Release
 # gets skipped. This does it on the merge that carries the version, and releases only
 # when that version has no tag yet -- so the merges that touch these files without
 # bumping, and a re-run over the same commit, both do nothing.
+#
+# The Official MCP Registry (registry.modelcontextprotocol.io) indexes the same file, and
+# until #18 the only thing that ever pushed it there was a person at a terminal -- so it
+# drifted, serving 1.3.0 while v1.3.1 was released here. The `publish` job below closes
+# that on the same merge, and publishes only when the registry does not already carry
+# the version, since the registry refuses a second publish of the same version anyway.
 
 on:
   push:
@@ -17,7 +23,9 @@ on:
       # filter that commit re-triggers nothing, and the version stays unreleased for good.
       - 'CHANGELOG.md'
   # The same recovery path when the fix lands in neither file, or the job failed for a
-  # reason that has nothing to do with the merge that tripped it.
+  # reason that has nothing to do with the merge that tripped it. Also how a version that
+  # is tagged but missing from the registry gets published: `publish` asks the registry,
+  # not the tag, whether there is work to do.
   workflow_dispatch:
 
 permissions:
@@ -33,6 +41,10 @@ jobs:
     # org's shared self-hosted pool has (limitguard-ai #410/#411, walker-brain,
     # silou, archon-walker). No Docker, no required-check role -- safe to move.
     runs-on: self-hosted
+    outputs:
+      # Read before the tagged/untagged fork, so `publish` sees it on every run --
+      # including the already-tagged one, which is the registry catch-up path.
+      version: ${{ steps.listing.outputs.version }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -90,3 +102,176 @@ jobs:
           set -euo pipefail
           gh release create "v${VERSION}" --title "v${VERSION}" \
             --notes-file "${RUNNER_TEMP}/notes.md" --target "${GITHUB_SHA}"
+
+  publish:
+    # The registry only ever had this listing published by hand, and versions there are
+    # immutable: once 1.3.1 is in, it cannot be edited or re-published, and a second
+    # publish of the same version is rejected. So the job asks the registry for the exact
+    # version first and does nothing when it is already there -- which makes a re-run,
+    # and a workflow_dispatch over an already-tagged commit, the way a version that got
+    # tagged without being published (the situation in #18) is recovered.
+    #
+    # `needs: tag` is deliberate: a bump whose changelog section is missing fails `tag`,
+    # and the registry should not get ahead of a GitHub release that was refused.
+    needs: tag
+    # `Install mcp-publisher` downloads the linux_arm64 build unconditionally, so this job
+    # only works on an ARM64 runner. ARM64 is a label every self-hosted runner applies to
+    # itself from its architecture, so this pins the pair rather than adding a requirement.
+    runs-on: [self-hosted, ARM64]
+    permissions:
+      contents: read
+    env:
+      VERSION: ${{ needs.tag.outputs.version }}
+      REGISTRY_URL: https://registry.modelcontextprotocol.io
+      # mcp-publisher is the registry's own CLI, released from the registry's repo.
+      # linux_arm64 build for the self-hosted (ARM64) pool. Checksum from the release's
+      # own registry_1.8.1_checksums.txt, verified independently by downloading and
+      # hashing the artifact (2026-09-15).
+      MCP_PUBLISHER_VERSION: '1.8.1'
+      MCP_PUBLISHER_SHA256: '8dd75a6cf6845688b5d4e46df58d3ca26d5c8d233bb0626606e1db82c5e883e4'
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Check whether the registry already carries this version
+        id: registry
+        run: |
+          set -euo pipefail
+          name="$(python3 -c 'import json; print(json.load(open("server.json"))["name"])')"
+          # Anchored for the same reason `tag` anchors the version: a generator writes this
+          # field, and from here it becomes a step output. A value carrying a newline would
+          # write further lines into $GITHUB_OUTPUT rather than being rejected.
+          if [[ ! "${name}" =~ ^[A-Za-z0-9._-]+/[A-Za-z0-9._-]+$ ]]; then
+            echo "::error::server.json name '${name}' is not a registry namespace/name value."
+            exit 1
+          fi
+          # The name carries a '/', which the registry's path wants as %2F.
+          encoded="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${name}")"
+          echo "name=${name}" >> "$GITHUB_OUTPUT"
+          echo "encoded=${encoded}" >> "$GITHUB_OUTPUT"
+          # 200 means this exact version is already published and there is nothing to
+          # do. 404 means publish. Anything else is the registry misbehaving, and guessing
+          # either way is worse than stopping. No -f on this curl: 404 is an answer here.
+          code="$(curl -sS --max-time 30 --retry 3 --retry-delay 5 -o /dev/null -w '%{http_code}' \
+            "${REGISTRY_URL}/v0.1/servers/${encoded}/versions/${VERSION}")"
+          case "${code}" in
+            200) echo "published=true" >> "$GITHUB_OUTPUT"
+                 echo "${name} ${VERSION} is already in the MCP Registry." >> "$GITHUB_STEP_SUMMARY" ;;
+            404) echo "published=false" >> "$GITHUB_OUTPUT" ;;
+            *)   echo "::error::${REGISTRY_URL} answered HTTP ${code} for ${name}@${VERSION}; cannot tell whether it is published."
+                 exit 1 ;;
+          esac
+
+      - name: Refuse to continue without the domain key
+        if: steps.registry.outputs.published == 'false'
+        env:
+          # The private half of the Ed25519 key whose public half api.limitguard.ai serves
+          # at /.well-known/mcp-registry-auth (limitguard-ai app/routers/discovery.py).
+          # Rotated 2026-09-08 (limitguard-ai#178); the same key lives in ~/.config/limitguard
+          # on Walker's Mac. Never regenerate it here: a new key would not match the served
+          # proof, and the namespace ai.limitguard.api/* is only publishable under it.
+          PRIVATE_KEY: ${{ secrets.MCP_REGISTRY_PRIVATE_KEY_HEX }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PRIVATE_KEY}" ]; then
+            echo "::error::${VERSION} is released but not in the MCP Registry, and secret MCP_REGISTRY_PRIVATE_KEY_HEX is not set, so it cannot be published. Add the existing domain key (64 hex chars) with 'gh secret set MCP_REGISTRY_PRIVATE_KEY_HEX --repo ${GITHUB_REPOSITORY}' and re-run this workflow, or publish once by hand: 'mcp-publisher login http --domain api.limitguard.ai --private-key <hex> && mcp-publisher publish server.json'."
+            exit 1
+          fi
+          # `login http` wants the raw 64-hex private key, not a PEM. Say so before the
+          # CLI produces a less specific error.
+          if [[ ! "${PRIVATE_KEY}" =~ ^[0-9a-fA-F]{64}$ ]]; then
+            echo "::error::MCP_REGISTRY_PRIVATE_KEY_HEX is not a 64-character hex Ed25519 private key."
+            exit 1
+          fi
+
+      # `login http` signs the current time, and the registry rejects a signature whose
+      # timestamp is more than 15 seconds from its own clock. The first run of this job
+      # (2026-09-15) failed exactly there: the self-hosted runner's clock was about two
+      # minutes behind. That 401 says nothing about clocks, so measure the skew against
+      # the registry's own Date header first and name the actual fix.
+      - name: Refuse to continue if the runner's clock is off
+        if: steps.registry.outputs.published == 'false'
+        run: |
+          set -euo pipefail
+          # -D - dumps the headers of every response, and --retry means a 503 that retries
+          # into a 200 produces one Date line per attempt. `date -d` refuses a multi-line
+          # value, so keep only the last -- the response that actually answered.
+          registry_date="$(curl -sS --max-time 30 --retry 3 --retry-delay 5 -o /dev/null -D - \
+            "${REGISTRY_URL}/v0.1/health" | awk 'tolower($1) == "date:" { sub(/^[Dd]ate: /, ""); sub(/\r$/, ""); last = $0 } END { if (last != "") print last }')"
+          if [ -z "${registry_date}" ]; then
+            echo "::error::${REGISTRY_URL}/v0.1/health did not return a Date header; cannot check the runner's clock against it."
+            exit 1
+          fi
+          registry_epoch="$(date -u -d "${registry_date}" +%s)"
+          runner_epoch="$(date -u +%s)"
+          skew=$(( runner_epoch - registry_epoch ))
+          if (( skew > 10 || skew < -10 )); then
+            echo "::error::This runner's clock is ${skew}s off the registry's (runner $(date -u +%FT%TZ), registry ${registry_date}). The registry rejects login signatures more than 15s from its clock, so publishing cannot work until NTP is fixed on the self-hosted runner. Fix the clock and re-run this workflow, or publish once by hand: 'mcp-publisher login http --domain api.limitguard.ai --private-key <hex> && mcp-publisher publish server.json'."
+            exit 1
+          fi
+          echo "Runner clock within ${skew}s of the registry."
+
+      - name: Install mcp-publisher
+        if: steps.registry.outputs.published == 'false'
+        run: |
+          set -euo pipefail
+          curl -sSfL -o "${RUNNER_TEMP}/mcp-publisher.tar.gz" \
+            "https://github.com/modelcontextprotocol/registry/releases/download/v${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_arm64.tar.gz"
+          echo "${MCP_PUBLISHER_SHA256}  ${RUNNER_TEMP}/mcp-publisher.tar.gz" | sha256sum -c -
+          # The tarball also carries LICENSE and README.md; only the binary is wanted.
+          tar xzf "${RUNNER_TEMP}/mcp-publisher.tar.gz" -C "${RUNNER_TEMP}" mcp-publisher
+          "${RUNNER_TEMP}/mcp-publisher" --version
+
+      - name: Validate server.json against the registry schema
+        if: steps.registry.outputs.published == 'false'
+        run: |
+          set -euo pipefail
+          "${RUNNER_TEMP}/mcp-publisher" validate server.json
+
+      # The token mcp-publisher writes on login lands under $HOME/.config/mcp-publisher/,
+      # and $HOME on a self-hosted runner outlives the job and is shared with every other
+      # repository on the pool. So login and publish run under a HOME inside RUNNER_TEMP,
+      # which the last step removes whatever happened in between. The key itself is
+      # masked in the log, but the 1.8.1 CLI only takes it as a flag, so it is on the
+      # process command line for the duration of the login call; accepted for now.
+      - name: Log in to the registry with the domain key
+        if: steps.registry.outputs.published == 'false'
+        env:
+          PRIVATE_KEY: ${{ secrets.MCP_REGISTRY_PRIVATE_KEY_HEX }}
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/mcp-publisher-home"
+          HOME="${RUNNER_TEMP}/mcp-publisher-home" "${RUNNER_TEMP}/mcp-publisher" login http \
+            --domain api.limitguard.ai --private-key "${PRIVATE_KEY}" --registry "${REGISTRY_URL}"
+
+      - name: Publish to the registry
+        if: steps.registry.outputs.published == 'false'
+        run: |
+          set -euo pipefail
+          HOME="${RUNNER_TEMP}/mcp-publisher-home" "${RUNNER_TEMP}/mcp-publisher" publish server.json
+
+      - name: Confirm the registry now serves this version as latest
+        if: steps.registry.outputs.published == 'false'
+        env:
+          ENCODED: ${{ steps.registry.outputs.encoded }}
+          NAME: ${{ steps.registry.outputs.name }}
+        run: |
+          set -euo pipefail
+          attempt=0
+          until latest="$(curl -sSf --max-time 30 \
+              "${REGISTRY_URL}/v0.1/servers/${ENCODED}/versions/latest" \
+              | python3 -c 'import json, sys; print(json.load(sys.stdin)["server"]["version"])')" \
+              && [ "${latest}" = "${VERSION}" ]; do
+            attempt=$((attempt + 1))
+            if [ "${attempt}" -ge 5 ]; then
+              echo "::error::published ${NAME}@${VERSION} but the registry's latest is still ${latest:-unknown} after ${attempt} checks."
+              exit 1
+            fi
+            sleep 5
+          done
+          echo "Published ${NAME} ${VERSION} to the MCP Registry: ${REGISTRY_URL}/v0.1/servers/${ENCODED}/versions/latest" >> "$GITHUB_STEP_SUMMARY"
+
+      # The runner wipes RUNNER_TEMP between jobs; this is defence in depth so the login
+      # token never outlives the job even if that changes.
+      - name: Remove the login token and the downloaded CLI
+        if: always()
+        run: rm -rf "${RUNNER_TEMP}/mcp-publisher-home" "${RUNNER_TEMP}/mcp-publisher" "${RUNNER_TEMP}/mcp-publisher.tar.gz"
