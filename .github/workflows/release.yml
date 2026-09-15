@@ -184,6 +184,10 @@ jobs:
           set -euo pipefail
           registry_date="$(curl -sS --max-time 30 --retry 3 --retry-delay 5 -o /dev/null -D - \
             "${REGISTRY_URL}/v0.1/health" | awk 'tolower($1) == "date:" { sub(/^[Dd]ate: /, ""); sub(/\r$/, ""); print }')"
+          if [ -z "${registry_date}" ]; then
+            echo "::error::${REGISTRY_URL}/v0.1/health did not return a Date header; cannot check the runner's clock against it."
+            exit 1
+          fi
           registry_epoch="$(date -u -d "${registry_date}" +%s)"
           runner_epoch="$(date -u +%s)"
           skew=$(( runner_epoch - registry_epoch ))
@@ -239,13 +243,18 @@ jobs:
           NAME: ${{ steps.registry.outputs.name }}
         run: |
           set -euo pipefail
-          latest="$(curl -sSf --max-time 30 --retry 3 --retry-delay 5 \
-            "${REGISTRY_URL}/v0.1/servers/${ENCODED}/versions/latest" \
-            | python3 -c 'import json, sys; print(json.load(sys.stdin)["server"]["version"])')"
-          if [ "${latest}" != "${VERSION}" ]; then
-            echo "::error::published ${NAME}@${VERSION} but the registry's latest is ${latest}."
-            exit 1
-          fi
+          attempt=0
+          until latest="$(curl -sSf --max-time 30 \
+              "${REGISTRY_URL}/v0.1/servers/${ENCODED}/versions/latest" \
+              | python3 -c 'import json, sys; print(json.load(sys.stdin)["server"]["version"])')" \
+              && [ "${latest}" = "${VERSION}" ]; do
+            attempt=$((attempt + 1))
+            if [ "${attempt}" -ge 5 ]; then
+              echo "::error::published ${NAME}@${VERSION} but the registry's latest is still ${latest:-unknown} after ${attempt} checks."
+              exit 1
+            fi
+            sleep 5
+          done
           echo "Published ${NAME} ${VERSION} to the MCP Registry: ${REGISTRY_URL}/v0.1/servers/${ENCODED}/versions/latest" >> "$GITHUB_STEP_SUMMARY"
 
       # The runner wipes RUNNER_TEMP between jobs; this is defence in depth so the login
