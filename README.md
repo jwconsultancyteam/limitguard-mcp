@@ -106,7 +106,7 @@ but they act on an API key you already hold — see [API key tiers](#api-key-tie
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
 | `/v1/kyb/check` | POST | $1.50 | Know Your Business verification — company registration, sanctions screening, VAT/VIES, and domain analysis in one call. |
-| `/v1/compliance/alerts` | GET | $0.10 | EU regulatory change alerts filtered by jurisdiction and severity. Covers GDPR, EU AI Act, MiCA, and AMLD6. |
+| `/v1/compliance/alerts` | GET | $0.00 | EU regulatory change alerts filtered by jurisdiction and severity. Covers GDPR, EU AI Act, MiCA, and AMLD6. |
 | `/v1/compliance/report/{id}` | GET | $0.50 | Compliance report for an entity. |
 | `/v1/compliance/readiness/{id}` | GET | $0.10 | Compliance readiness check for an entity. |
 
