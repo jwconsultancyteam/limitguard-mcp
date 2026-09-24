@@ -106,7 +106,7 @@ but they act on an API key you already hold — see [API key tiers](#api-key-tie
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
 | `/v1/kyb/check` | POST | $1.50 | Know Your Business verification: company registration, sanctions screening, VAT/VIES, and domain analysis in one call. |
-| `/v1/compliance/alerts` | GET | $0.00 | Free ($0): returns an empty list until the alert feed is populated. EU regulatory change alerts filtered by jurisdiction and severity (GDPR, EU AI Act, MiCA, AMLD6 once populated). |
+| `/v1/compliance/alerts` | GET | $0.00 | Free ($0): daily changes to the OFAC, EU and UN sanctions lists, plus alerts when an entity or wallet this key checked is listed. Poll this route; alerts are not pushed. Filter by jurisdiction and severity. |
 | `/v1/compliance/readiness/{id}` | GET | $0.10 | EU AI Act compliance readiness assessment for AI systems. Returns readiness score with gap analysis. |
 
 ### MCP tool paths (direct HTTP)
