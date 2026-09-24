@@ -25,6 +25,16 @@ Entries from 1.2.0 onward are written by `scripts/sync_public_repos.py` in
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [2.0.0] - 2026-09-24
+
+### Changed
+- Tool `check_agent` removed.
+- Tool `get_trust_score` removed.
+- Tool `verify_wallet` description updated.
+- Remote `Authorization` header declared.
+- `smithery.yaml` regenerated.
+- `llms-install.md` regenerated.
+
 ## [1.3.3] - 2026-09-24
 
 ### Changed
