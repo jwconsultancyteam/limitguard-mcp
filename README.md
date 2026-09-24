@@ -6,7 +6,9 @@ Trust Intelligence for AI agents. Entity verification, sanctions screening, and 
 **Transport:** Streamable HTTP (POST)
 **Auth:** API key (Bearer), plus an x402 micropayment per call on the free and sandbox tiers
 
-**Start here:** Free sandbox key, no wallet. $0.65-0.85 fresh; $0.10 cached when available.
+**What it is:** LimitGuard is a KYB, sanctions/PEP and entity-trust API for AI agents and developers: it checks a company against business registers (KVK, KBO/CBE), VIES VAT, OpenSanctions, its domain and country risk, is paid per call with x402 (USDC) or an API key, is also served as an MCP server, and is hosted in the EU.
+
+**Start here:** Free sandbox key, no wallet. $0.65-0.85 fresh for entity and risk checks ($1.50 KYB); $0.10 cached when available.
 
 ## Tools
 
@@ -16,9 +18,6 @@ the names it returns, and the names `tools/call` accepts:
 | Tool | Description | Inputs |
 |------|-------------|--------|
 | `check_entity` | Full trust intelligence check on a business entity. Returns trust score (0-100), risk level, and recommendation. | `entity_name` (required), `country` (required), `kvk_number`, `domain` |
-| `check_agent` | Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Verify AI agent trust. Checks if an AI agent is trusted based on its identifier. | `agent_id` (required), `agent_name` (required) |
-| `get_trust_score` | Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Quick trust score lookup by entity ID. Returns cached score if available. | `entity_id` (required) |
-| `verify_wallet` | Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Check wallet trust score for crypto payments. Supports EVM and Solana addresses. | `wallet_address` (required), `chain_id` |
 | `get_risk_score` | Quick risk assessment without full trust check. Focuses on risk signals only. | `entity_name` (required), `country` (required) |
 
 ## Pricing
@@ -85,30 +84,29 @@ but they act on an API key you already hold — see [API key tiers](#api-key-tie
 
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
-| `/v1/entity/check` | POST | $0.85 | Full entity trust check across every verification layer — KVK/CBE registry, OpenSanctions, country risk (CPI/FATF), domain WHOIS, IBAN validation, EU VAT/VIES, wallet screening, and x402 payment history. Returns trust score 0-100 with cluster and recommendation. |
-| `/v1/risk/score` | POST | $0.65 | Quick risk score (0-100) for entity name + country. Lightweight check without the full data source scan. |
+| `/v1/entity/check` | POST | $0.85 | Full entity trust check across multiple verification layers: KVK/CBE registry, OpenSanctions, country risk (CPI/FATF), domain WHOIS, IBAN validation and EU VAT/VIES. Returns trust score 0-100 with cluster and recommendation. |
+| `/v1/risk/score` | POST | $0.65 | Quick risk score (0-100) for entity name + country. Lightweight check without full data source scan. |
 
 ### Reputation management
 
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
-| `/v1/reputation/score` | POST | $0.65 | Reputation scoring with Bayesian trust decay. Tracks entity trust over time with confidence intervals. |
-| `/v1/reputation/history/{id}` | GET | $0.10 | Reputation history for an entity. |
+| `/v1/reputation/score` | POST | $0.65 | Reputation scoring with Bayesian trust decay analysis. Tracks entity trust over time with confidence intervals. |
+| `/v1/reputation/history/{id}` | GET | $0.10 | Historical reputation trend data. Returns trust score timeline with change events and decay curves. |
 
 ### Wallet services
 
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
-| `/v1/wallet/balance` | GET | $0.10 | ERC-8004 agent wallet balance — USDC balance and transaction count for AI agent wallets. |
+| `/v1/wallet/balance` | GET | $0.10 | ERC-8004 agent wallet balance check. Returns the on-chain USDC balance (Base mainnet) for a registered ERC-8004 agent wallet. |
 
 ### Regulatory compliance
 
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
-| `/v1/kyb/check` | POST | $1.50 | Know Your Business verification — company registration, sanctions screening, VAT/VIES, and domain analysis in one call. |
-| `/v1/compliance/alerts` | GET | $0.10 | EU regulatory change alerts filtered by jurisdiction and severity. Covers GDPR, EU AI Act, MiCA, and AMLD6. |
-| `/v1/compliance/report/{id}` | GET | $0.50 | Compliance report for an entity. |
-| `/v1/compliance/readiness/{id}` | GET | $0.10 | Compliance readiness check for an entity. |
+| `/v1/kyb/check` | POST | $1.50 | Know Your Business verification: company registration, sanctions screening, VAT/VIES, and domain analysis in one call. |
+| `/v1/compliance/alerts` | GET | $0.00 | Free ($0): returns an empty list until the alert feed is populated. EU regulatory change alerts filtered by jurisdiction and severity (GDPR, EU AI Act, MiCA, AMLD6 once populated). |
+| `/v1/compliance/readiness/{id}` | GET | $0.10 | EU AI Act compliance readiness assessment for AI systems. Returns readiness score with gap analysis. |
 
 ### MCP tool paths (direct HTTP)
 
