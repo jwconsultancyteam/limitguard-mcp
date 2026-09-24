@@ -6,7 +6,9 @@ Trust Intelligence for AI agents. Entity verification, sanctions screening, and 
 **Transport:** Streamable HTTP (POST)
 **Auth:** API key (Bearer), plus an x402 micropayment per call on the free and sandbox tiers
 
-**Start here:** Free sandbox key, no wallet. $0.65-0.85 fresh; $0.10 cached when available.
+**What it is:** LimitGuard is a KYB, sanctions/PEP and entity-trust API for AI agents and developers: it checks a company against business registers (KVK, KBO/CBE), VIES VAT, OpenSanctions, its domain and country risk, is paid per call with x402 (USDC) or an API key, is also served as an MCP server, and is hosted in the EU.
+
+**Start here:** Free sandbox key, no wallet. $0.65-0.85 fresh for entity and risk checks ($1.50 KYB); $0.10 cached ($0.25 KYB) when available.
 
 ## Tools
 
@@ -16,9 +18,7 @@ the names it returns, and the names `tools/call` accepts:
 | Tool | Description | Inputs |
 |------|-------------|--------|
 | `check_entity` | Full trust intelligence check on a business entity. Returns trust score (0-100), risk level, and recommendation. | `entity_name` (required), `country` (required), `kvk_number`, `domain` |
-| `check_agent` | Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Verify AI agent trust. Checks if an AI agent is trusted based on its identifier. | `agent_id` (required), `agent_name` (required) |
-| `get_trust_score` | Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Quick trust score lookup by entity ID. Returns cached score if available. | `entity_id` (required) |
-| `verify_wallet` | Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Check wallet trust score for crypto payments. Supports EVM and Solana addresses. | `wallet_address` (required), `chain_id` |
+| `verify_wallet` | Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. Free ($0). Supports EVM and Solana addresses. | `wallet_address` (required), `chain_id` |
 | `get_risk_score` | Quick risk assessment without full trust check. Focuses on risk signals only. | `entity_name` (required), `country` (required) |
 
 ## Pricing
@@ -192,7 +192,7 @@ Add to MCP settings:
 ### Smithery
 
 ```bash
-npx -y @smithery/cli install @limitguard/trust-intelligence
+npx -y @smithery/cli install team-mehs/limitguard
 ```
 
 ### Any MCP Client

@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "LimitGuard Trust Intelligence",
   "description": "Entity verification, sanctions screening, and trust scoring for AI agents via x402 micropayments.",
-  "version": "1.3.3",
+  "version": "2.0.0",
   "websiteUrl": "https://limitguard.ai",
   "repository": {
     "url": "https://github.com/jwconsultancyteam/limitguard-mcp",
@@ -13,7 +13,15 @@
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://api.limitguard.ai/mcp"
+      "url": "https://api.limitguard.ai/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Bearer lg_live_... -- the full header value, 'Bearer ' included. Free key: POST https://api.limitguard.ai/v1/keys/create with an email.",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
     }
   ],
   "tools": [
@@ -53,57 +61,8 @@
       }
     },
     {
-      "name": "check_agent",
-      "description": "Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Verify AI agent trust. Checks if an AI agent is trusted based on its identifier.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "agent_id": {
-            "type": "string",
-            "description": "Unique agent identifier"
-          },
-          "agent_name": {
-            "type": "string",
-            "description": "Human-readable agent name"
-          }
-        },
-        "required": [
-          "agent_id",
-          "agent_name"
-        ]
-      },
-      "annotations": {
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": true
-      }
-    },
-    {
-      "name": "get_trust_score",
-      "description": "Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Quick trust score lookup by entity ID. Returns cached score if available.",
-      "inputSchema": {
-        "type": "object",
-        "properties": {
-          "entity_id": {
-            "type": "string",
-            "description": "Entity identifier (KVK number, domain, or hash)"
-          }
-        },
-        "required": [
-          "entity_id"
-        ]
-      },
-      "annotations": {
-        "readOnlyHint": true,
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false
-      }
-    },
-    {
       "name": "verify_wallet",
-      "description": "Unimplemented / beta: returns placeholder data, not a real result. Free ($0) until real logic ships. Check wallet trust score for crypto payments. Supports EVM and Solana addresses.",
+      "description": "Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. Free ($0). Supports EVM and Solana addresses.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -113,7 +72,7 @@
           },
           "chain_id": {
             "type": "string",
-            "description": "CAIP-2 chain ID (default: eip155:8453 for Base)"
+            "description": "CAIP-2 chain ID (default: eip155:8453 for Base); base, eth, solana, btc also accepted"
           }
         },
         "required": [
