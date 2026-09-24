@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "LimitGuard Trust Intelligence",
   "description": "Entity verification, sanctions screening, and trust scoring for AI agents via x402 micropayments.",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "websiteUrl": "https://limitguard.ai",
   "repository": {
     "url": "https://github.com/jwconsultancyteam/limitguard-mcp",
@@ -62,7 +62,7 @@
     },
     {
       "name": "verify_wallet",
-      "description": "Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. Free ($0). Supports EVM and Solana addresses.",
+      "description": "Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. Free ($0). Supports EVM and Solana addresses.",
       "inputSchema": {
         "type": "object",
         "properties": {
