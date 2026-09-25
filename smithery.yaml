@@ -9,7 +9,7 @@ startCommand:
     properties:
       apiKey:
         type: "string"
-        description: "Optional. Authorization header value, including the 'Bearer ' prefix (format: Bearer lg_live_...). Needed for paid MCP tools. Without a key, pay per call with x402 on the REST endpoints. Get a key at https://limitguard.ai via POST /v1/keys/create."
+        description: "Authorization header value, including the 'Bearer ' prefix (format: Bearer lg_live_...). Needed to call any MCP tool (listing tools works without one). Without a key, pay per call with x402 on the REST endpoints. Get a key at https://limitguard.ai via POST /v1/keys/create."
         x-from:
           header: "bearer-token"
         x-to:
