@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "LimitGuard Trust Intelligence",
   "description": "Entity verification, sanctions screening, and trust scoring for AI agents via x402 micropayments.",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "websiteUrl": "https://limitguard.ai",
   "repository": {
     "url": "https://github.com/jwconsultancyteam/limitguard-mcp",
@@ -111,6 +111,62 @@
         "destructiveHint": false,
         "idempotentHint": true,
         "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_compliance_report",
+      "description": "Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, at most 3 findings, a per-source status table (ok / unavailable / error) and a report hash.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entity_name": {
+            "type": "string",
+            "description": "Full legal name (with country; omit when sending check_id)"
+          },
+          "country": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code"
+          },
+          "kvk_number": {
+            "type": "string",
+            "description": "Optional Dutch KVK number (8 digits)"
+          },
+          "cbe_number": {
+            "type": "string",
+            "description": "Optional Belgian CBE number (0XXX.XXX.XXX)"
+          },
+          "vat_number": {
+            "type": "string",
+            "description": "Optional EU VAT number"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Optional company website domain"
+          },
+          "iban": {
+            "type": "string",
+            "description": "Optional IBAN (never stored raw)"
+          },
+          "wallet_address": {
+            "type": "string",
+            "description": "Optional crypto wallet address (format check only)"
+          },
+          "wallet_chain": {
+            "type": "string",
+            "description": "Optional chain for wallet_address (eth, base, btc, sol, ...)"
+          },
+          "check_id": {
+            "type": "string",
+            "description": "Id of a check from an earlier report, instead of identifiers"
+          }
+        },
+        "required": []
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
       }
     }
   ]
