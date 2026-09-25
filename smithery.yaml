@@ -9,9 +9,8 @@ startCommand:
     properties:
       apiKey:
         type: "string"
-        description: "Authorization header value, including the 'Bearer ' prefix (format: Bearer lg_live_...). Get a key at https://limitguard.ai via POST /v1/keys/create."
+        description: "Optional. Authorization header value, including the 'Bearer ' prefix (format: Bearer lg_live_...). Needed for paid tools unless you pay per call with x402. Get a key at https://limitguard.ai via POST /v1/keys/create."
         x-from:
           header: "bearer-token"
         x-to:
           header: "Authorization"
-    required: ["apiKey"]
