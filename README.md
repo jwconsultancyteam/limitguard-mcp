@@ -20,6 +20,7 @@ the names it returns, and the names `tools/call` accepts:
 | `check_entity` | Full trust intelligence check on a business entity. Returns trust score (0-100), risk level, and recommendation. | `entity_name` (required), `country` (required), `kvk_number`, `domain` |
 | `verify_wallet` | Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. Free ($0). Supports EVM and Solana addresses. | `wallet_address` (required), `chain_id` |
 | `get_risk_score` | Quick risk assessment without full trust check. Focuses on risk signals only. | `entity_name` (required), `country` (required) |
+| `get_compliance_report` | Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, at most 3 findings, a per-source status table (ok / unavailable / error) and a report hash. | `entity_name`, `country`, `kvk_number`, `cbe_number`, `vat_number`, `domain`, `iban`, `wallet_address`, `wallet_chain`, `check_id` |
 
 ## Pricing
 
