@@ -25,6 +25,11 @@ Entries from 1.2.0 onward are written by `scripts/sync_public_repos.py` in
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [2.1.2] - 2026-09-25
+
+### Changed
+- Published tool table and prices refreshed.
+
 ## [2.1.1] - 2026-09-24
 
 ### Changed
