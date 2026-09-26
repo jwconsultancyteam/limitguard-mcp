@@ -78,7 +78,7 @@ check reached over plain HTTP: `/v1/entity/check` behind `check_entity` — the 
 `/v1/mcp/check-entity` as "same as `/v1/entity/check` with MCP-native interface" — and
 `/v1/risk/score` behind `get_risk_score`, at the same $0.65.
 
-Payment works the same way throughout: USDC on Base or Solana, pay-per-call. The 9 data endpoints
+Payment works the same way throughout: USDC on Base or Solana, pay-per-call. The 11 data endpoints
 below need no API key at all. The 4 `/v1/keys/upgrade/*` endpoints also take payment without one,
 but they act on an API key you already hold — see [API key tiers](#api-key-tiers).
 
@@ -88,6 +88,8 @@ but they act on an API key you already hold — see [API key tiers](#api-key-tie
 |----------|--------|-------|-------------|
 | `/v1/entity/check` | POST | $0.85 | Full entity trust check across multiple verification layers: KVK/CBE registry, OpenSanctions, country risk (CPI/FATF), domain WHOIS, IBAN validation and EU VAT/VIES. Returns trust score 0-100 with cluster and recommendation. |
 | `/v1/risk/score` | POST | $0.65 | Quick risk score (0-100) for entity name + country. Lightweight check without full data source scan. |
+| `/v1/entity/deep-check` | POST | $0.75 | Extended screening in up to three tiers. fresh ($0.75): politically exposed person and relative/close-associate (role.pep / role.rca) matches from OpenSanctions, with the match detail the standard entity check does not return, plus a Dutch Centraal Insolventieregister screen (NL only). enhanced ($1.50): the same plus adverse media screening against a global news index. If a source of the requested tier cannot be reached the call returns 503 and is not charged. |
+| `/v1/reports/entity` | POST | $1.50 | Per-entity report built from one real check's signals: identity, sanctions and PEP screening, domain signals, risk score, correlations with the caller's earlier reports, sources and an evidence hash. A source that did not answer is shown unavailable, never clean. |
 
 ### Reputation management
 
