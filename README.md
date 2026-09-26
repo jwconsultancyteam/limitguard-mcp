@@ -6,7 +6,7 @@ Trust Intelligence for AI agents. Entity verification, sanctions screening, and 
 **Transport:** Streamable HTTP (POST)
 **Auth:** API key (Bearer), plus an x402 micropayment per call on the free and sandbox tiers
 
-**What it is:** LimitGuard is a KYB, sanctions/PEP and entity-trust API for AI agents and developers: it checks a company against business registers (KVK, KBO/CBE), VIES VAT, OpenSanctions, its domain and country risk, is paid per call with x402 (USDC) or an API key, is also served as an MCP server, and is hosted in the EU.
+**What it is:** Limitguard is a KYB, sanctions/PEP and entity-trust API for AI agents and developers: it checks a company against business registers (KVK, KBO/CBE), VIES VAT, OpenSanctions, its domain and country risk, is paid per call with x402 (USDC) or an API key, is also served as an MCP server, and is hosted in the EU.
 
 **Start here:** Free sandbox key, no wallet. $0.65-0.85 fresh for entity and risk checks ($1.50 KYB); $0.10 cached ($0.25 KYB) when available.
 
