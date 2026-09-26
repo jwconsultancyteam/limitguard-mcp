@@ -1,4 +1,4 @@
-# Limitguard Trust Intelligence MCP server: installation
+# Limitguard MCP server: installation
 
 Free sandbox key, no wallet. $0.65-0.85 fresh for entity and risk checks ($1.50 KYB); $0.10 cached ($0.25 KYB) when available.
 
