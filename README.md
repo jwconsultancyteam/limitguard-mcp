@@ -1,4 +1,4 @@
-# LimitGuard MCP Server
+# Limitguard MCP Server
 
 Trust Intelligence for AI agents. Entity verification, sanctions screening, and risk scoring via the [Model Context Protocol](https://modelcontextprotocol.io/).
 
@@ -126,7 +126,7 @@ MCP session.
 
 ### API key tiers
 
-LimitGuard accepts two forms of payment: x402 per call, or a **paid-tier** API key whose
+Limitguard accepts two forms of payment: x402 per call, or a **paid-tier** API key whose
 subscription prepays the calls. Paying per call needs no API key on 13 of the 18 endpoints — the
 9 data endpoints above and the 4 `/v1/keys/upgrade/*` paths. The other 5 always want a key: the
 MCP transport takes `Authorization: Bearer` on every `tools/call`, and its `/v1/mcp/*` mirrors
