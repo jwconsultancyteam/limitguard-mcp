@@ -25,6 +25,12 @@ Entries from 1.2.0 onward are written by `scripts/sync_public_repos.py` in
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [2.3.0] - 2026-10-02
+
+### Changed
+- Tool `get_compliance_report` description updated.
+- `llms-install.md` regenerated.
+
 ## [2.2.6] - 2026-10-01
 
 ### Changed

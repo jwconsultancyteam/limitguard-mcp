@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "Limitguard Trust Intelligence",
   "description": "Entity verification, sanctions screening, and trust scoring for AI agents via x402 micropayments.",
-  "version": "2.2.6",
+  "version": "2.3.0",
   "websiteUrl": "https://limitguard.ai",
   "repository": {
     "url": "https://github.com/jwconsultancyteam/limitguard-mcp",
@@ -115,7 +115,7 @@
     },
     {
       "name": "get_compliance_report",
-      "description": "Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, at most 3 findings, a per-source status table (ok / unavailable / error) and a report hash.",
+      "description": "Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, every finding as a ranked action, a per-source status table (ok / unavailable / error) and a report hash.",
       "inputSchema": {
         "type": "object",
         "properties": {
