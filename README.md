@@ -89,6 +89,9 @@ but they act on an API key you already hold — see [API key tiers](#api-key-tie
 
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
+| `/v1/leads/verify` | POST | $0.24 | Lead verification for one Dutch or Belgian sales lead: is it a real, active company, does the VAT number belong to it, can its email domain receive mail, is it on a sanctions list. A 0-100 lead score with the reason. |
+| `/v1/agent/check` | POST | $0.75 | Check a counterparty agent's EVM wallet in one call: sanctions address list, Base USDC and ETH balance, ERC-8004 identity and open feedback, plus optional domain probes. |
+| `/v1/sanctions/screen` | POST | $0.10 | Name screen against the OFAC SDN, EU and UN sanctions lists (refreshed daily): the matched entries with list, programmes, countries, listing date and match score. |
 | `/v1/entity/check` | POST | $0.85 | Full entity trust check across multiple verification layers: KVK/CBE registry, OpenSanctions, country risk (CPI/FATF), domain WHOIS, IBAN validation and EU VAT/VIES. Returns trust score 0-100 with cluster and recommendation. |
 | `/v1/risk/score` | POST | $0.65 | Quick risk score (0-100) for entity name + country. Lightweight check without full data source scan. |
 | `/v1/entity/deep-check` | POST | $0.75 | Extended screening in up to three tiers. fresh ($0.75): politically exposed person and relative/close-associate (role.pep / role.rca) matches from OpenSanctions, with the match detail the standard entity check does not return, plus a Dutch Centraal Insolventieregister screen (NL only). enhanced ($1.50): the same plus adverse media screening against a global news index. If a source of the requested tier cannot be reached the call returns 503 and is not charged. |
