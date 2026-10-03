@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "Limitguard Trust Intelligence",
   "description": "Entity verification, sanctions screening, and trust scoring for AI agents via x402 micropayments.",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "websiteUrl": "https://limitguard.ai",
   "repository": {
     "url": "https://github.com/jwconsultancyteam/limitguard-mcp",
@@ -262,6 +262,30 @@
           "phone": {
             "type": "string",
             "description": "Phone number the lead gave; compared with the numbers the company publishes, never echoed. Rejected until website phone lookup is switched on"
+          },
+          "target_industries": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "maxItems": 20,
+            "description": "Ideal-customer industries: SBI/NACE code prefixes (\"62\") or whole words; information only"
+          },
+          "target_size": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false,
+            "description": "Ideal-customer employee range {min, max}, both inclusive; information only"
           }
         },
         "required": [
