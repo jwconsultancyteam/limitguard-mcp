@@ -6,7 +6,7 @@ Trust Intelligence for AI agents. Entity verification, sanctions screening, and 
 **Transport:** Streamable HTTP (POST)
 **Auth:** API key (Bearer), plus an x402 micropayment per call on the free and sandbox tiers
 
-**What it is:** Limitguard is a KYB, sanctions/PEP and entity-trust API for AI agents and developers: it checks a company against business registers (KVK, KBO/CBE), VIES VAT, OpenSanctions, its domain and country risk, is paid per call with x402 (USDC) or an API key, is also served as an MCP server, and is hosted in the EU.
+**What it is:** Limitguard is a lead verification service for B2B sales, lead-gen and marketing teams in the Netherlands and Belgium, helping them check which leads are real, active companies before outreach. Developers and AI agents can use its HTTP API, MCP server and A2A service, hosted in the EU.
 
 **Start here:** Free sandbox key, no wallet. $0.10-1.50 per call; entity and risk checks $0.65-0.85 fresh ($1.50 KYB), $0.10 cached ($0.25 KYB) when available.
 
@@ -18,9 +18,12 @@ the names it returns, and the names `tools/call` accepts:
 | Tool | Description | Inputs |
 |------|-------------|--------|
 | `check_entity` | Full trust intelligence check on a business entity. Returns trust score (0-100), risk level, and recommendation. | `entity_name` (required), `country` (required), `kvk_number`, `domain` |
+| `get_trust_score` | Look up your own most recent trust score for an entity you checked before, from your stored checks: score, level, when, which product, trend and how many checks are on record. Runs no new check and calls no data source. Free ($0). | `entity_id` (required) |
 | `verify_wallet` | Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. Free ($0). Supports EVM and Solana addresses. | `wallet_address` (required), `chain_id` |
 | `get_risk_score` | Quick risk assessment without full trust check. Focuses on risk signals only. | `entity_name` (required), `country` (required) |
-| `get_compliance_report` | Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, at most 3 findings, a per-source status table (ok / unavailable / error) and a report hash. | `entity_name`, `country`, `kvk_number`, `cbe_number`, `vat_number`, `domain`, `iban`, `wallet_address`, `wallet_chain`, `check_id` |
+| `get_compliance_report` | Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, every finding as a ranked action, a per-source status table (ok / unavailable / error) and a report hash. | `entity_name`, `country`, `kvk_number`, `cbe_number`, `vat_number`, `domain`, `iban`, `wallet_address`, `wallet_chain`, `check_id` |
+| `check_agent_wallet` | Check a counterparty agent's EVM wallet in one call: OFAC SDN digital-currency address list match, Base USDC and ETH balance, ERC-8004 identity registration (and, given an agent id, that agent's owner and payment wallet) and open ERC-8004 feedback, which is not scored. $0.75. | `wallet` (required), `agent_id`, `domain` |
+| `verify_lead` | Verify a NL/BE sales lead against the registers in one call: real and active, VAT, mail server, IBAN, sanctions; a 0-100 lead score. $0.24. | `country` (required), `company_number`, `name`, `vat_number`, `email`, `domain`, `address`, `iban`, `phone` |
 
 ## Pricing
 
