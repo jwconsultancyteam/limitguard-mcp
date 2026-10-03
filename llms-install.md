@@ -1,6 +1,6 @@
 # Limitguard MCP server: installation
 
-Free sandbox key, no wallet. $0.10-1.50 per call; entity and risk checks $0.65-0.85 fresh ($1.50 KYB), $0.10 cached ($0.25 KYB) when available.
+Free sandbox key, no wallet. The sandbox covers entity, risk and KYB checks; Lead Verify and the agent check need a live key or an x402 payment. Lead Verify $0.24 per lead and agent check $0.75 per wallet; $0.10-1.50 per call; entity and risk checks $0.65-0.85 fresh ($1.50 KYB), $0.10 cached ($0.25 KYB) when available.
 
 No server process, no npm or Python package: this is a remote Streamable HTTP server.
 
