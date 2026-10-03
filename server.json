@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "Limitguard Trust Intelligence",
   "description": "Entity verification, sanctions screening, and trust scoring for AI agents via x402 micropayments.",
-  "version": "2.2.6",
+  "version": "2.3.0",
   "websiteUrl": "https://limitguard.ai",
   "repository": {
     "url": "https://github.com/jwconsultancyteam/limitguard-mcp",
@@ -51,6 +51,28 @@
         "required": [
           "entity_name",
           "country"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_trust_score",
+      "description": "Look up your own most recent trust score for an entity you checked before, from your stored checks: score, level, when, which product, trend and how many checks are on record. Runs no new check and calls no data source. Free ($0).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entity_id": {
+            "type": "string",
+            "description": "Entity name, as sent to check_entity"
+          }
+        },
+        "required": [
+          "entity_id"
         ]
       },
       "annotations": {
@@ -115,7 +137,7 @@
     },
     {
       "name": "get_compliance_report",
-      "description": "Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, at most 3 findings, a per-source status table (ok / unavailable / error) and a report hash.",
+      "description": "Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, every finding as a ranked action, a per-source status table (ok / unavailable / error) and a report hash.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -161,6 +183,90 @@
           }
         },
         "required": []
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "check_agent_wallet",
+      "description": "Check a counterparty agent's EVM wallet in one call: OFAC SDN digital-currency address list match, Base USDC and ETH balance, ERC-8004 identity registration (and, given an agent id, that agent's owner and payment wallet) and open ERC-8004 feedback, which is not scored. $0.75.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "wallet": {
+            "type": "string",
+            "description": "EVM wallet address (0x + 40 hex characters)"
+          },
+          "agent_id": {
+            "type": "string",
+            "description": "Optional ERC-8004 agentId (decimal) the wallet claims"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Optional website domain the agent gives for itself (e.g. example.com)"
+          }
+        },
+        "required": [
+          "wallet"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "verify_lead",
+      "description": "Verify a NL/BE sales lead against the registers in one call: real and active, VAT, mail server, IBAN, sanctions; a 0-100 lead score. $0.24.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "description": "NL (KVK) or BE (KBO)"
+          },
+          "company_number": {
+            "type": "string",
+            "description": "8-digit KVK number or 10-digit KBO/CBE number"
+          },
+          "name": {
+            "type": "string",
+            "description": "Company name as the lead gave it (NL without a number)"
+          },
+          "vat_number": {
+            "type": "string",
+            "description": "EU VAT number, checked with VIES"
+          },
+          "email": {
+            "type": "string",
+            "description": "Contact email; only its domain is checked"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Company website domain"
+          },
+          "address": {
+            "type": "object",
+            "description": "{street, house_number, postcode, city} the lead gave"
+          },
+          "iban": {
+            "type": "string",
+            "description": "IBAN the lead gave; only country, bank, BIC and last 4 are returned"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number the lead gave; compared with the numbers the company publishes, never echoed. Rejected until website phone lookup is switched on"
+          }
+        },
+        "required": [
+          "country"
+        ]
       },
       "annotations": {
         "readOnlyHint": true,
