@@ -5,6 +5,31 @@
   "description": "Entity verification, sanctions screening, and trust scoring for AI agents via x402 micropayments.",
   "version": "2.4.1",
   "websiteUrl": "https://limitguard.ai",
+  "icons": [
+    {
+      "src": "https://limitguard.ai/icon-512.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
+      ]
+    },
+    {
+      "src": "https://limitguard.ai/assets/brand/mark.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ],
+      "theme": "light"
+    },
+    {
+      "src": "https://limitguard.ai/assets/brand/mark-dark.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ],
+      "theme": "dark"
+    }
+  ],
   "repository": {
     "url": "https://github.com/jwconsultancyteam/limitguard-mcp",
     "source": "github"
