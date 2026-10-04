@@ -13,7 +13,7 @@ Trust Intelligence for AI agents. Entity verification, sanctions screening, and 
 
 **What it is:** Limitguard is a lead validation service for lead generation agencies, B2B marketing and sales teams: it checks the company behind each lead against official business registers (full coverage in the Netherlands and Belgium), EU VAT and sanctions lists, with website age in the company check, and returns proceed, review or block with the source on every line. Developers and AI agents can use its HTTP API, MCP server and A2A service, hosted in the EU.
 
-**Start here:** Free sandbox key, no wallet. The sandbox covers entity, risk and KYB checks; Lead Verify and the agent check need a live key or an x402 payment. Lead Verify $0.24 per lead and agent check $0.75 per wallet; $0.10-1.50 per call; entity and risk checks $0.65-0.85 fresh ($1.50 KYB), $0.10 cached ($0.25 KYB) when available.
+**Start here:** Free sandbox key, no wallet. The sandbox covers entity, risk and KYB checks; Lead Verify and the agent check need a live key or an x402 payment. Lead Verify $0.27 per lead and agent check $0.75 per wallet; $0.10-1.85 per call; entity and risk checks $0.75-1.05 fresh ($1.50 KYB), $0.10 cached ($0.25 KYB) when available.
 
 ## Tools
 
@@ -28,7 +28,7 @@ the names it returns, and the names `tools/call` accepts:
 | `get_risk_score` | Quick risk assessment without full trust check. Focuses on risk signals only. | `entity_name` (required), `country` (required) |
 | `get_compliance_report` | Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, every finding as a ranked action, a per-source status table (ok / unavailable / error) and a report hash. | `entity_name`, `country`, `kvk_number`, `cbe_number`, `vat_number`, `domain`, `iban`, `wallet_address`, `wallet_chain`, `check_id` |
 | `check_agent_wallet` | Check a counterparty agent's EVM wallet in one call: OFAC SDN digital-currency address list match, Base USDC and ETH balance, ERC-8004 identity registration (and, given an agent id, that agent's owner and payment wallet) and open ERC-8004 feedback, which is not scored. $0.75. | `wallet` (required), `agent_id`, `domain` |
-| `verify_lead` | Verify a NL/BE sales lead against the registers in one call: real and active, VAT, mail server, IBAN, sanctions; a 0-100 lead score. $0.24. | `country` (required), `company_number`, `name`, `vat_number`, `email`, `domain`, `address`, `iban`, `phone`, `target_industries`, `target_size` |
+| `verify_lead` | Verify a NL/BE sales lead against the registers in one call: real and active, VAT, mail server, IBAN, sanctions; a 0-100 lead score. $0.27. | `country` (required), `company_number`, `name`, `vat_number`, `email`, `domain`, `address`, `iban`, `phone`, `target_industries`, `target_size` |
 
 ## Pricing
 
@@ -36,8 +36,8 @@ All tools are priced via [x402](https://www.x402.org/) micropayments (USDC on Ba
 
 | Endpoint | Price |
 |----------|-------|
-| Entity Check (`/v1/mcp/check-entity`) | $0.85 |
-| Risk Score (`/v1/mcp/risk-score`) | $0.65 |
+| Entity Check (`/v1/mcp/check-entity`) | $1.05 |
+| Risk Score (`/v1/mcp/risk-score`) | $0.90 |
 | Check Agent (`/v1/mcp/check-agent`) | $0.00 — unimplemented / beta, placeholder data |
 | Trust Score (`/v1/mcp/trust-score`) | $0.00 — unimplemented / beta, placeholder data |
 | Verify Wallet (`/v1/mcp/verify-wallet`) | $0.00 — unimplemented / beta, placeholder data |
@@ -94,19 +94,19 @@ but they act on an API key you already hold — see [API key tiers](#api-key-tie
 
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
-| `/v1/leads/verify` | POST | $0.24 | Lead verify for one NL or BE sales lead: is it a real, active company? Checks the KVK or KBO register (status, legal form, start date, main activity, staff, registered address) and cross-checks whatever else the lead holds: VAT number with VIES, mail server and disposable domain, IBAN country and bank (the account holder is not checked), and the company name against the OFAC, EU and UN sanctions lists. Returns a verdict, a 0-100 lead score, flags and one action per flag. An input not given is not checked and never counts against the lead. |
+| `/v1/leads/verify` | POST | $0.27 | Lead verify for one NL or BE sales lead: is it a real, active company? Checks the KVK or KBO register (status, legal form, start date, main activity, staff, registered address) and cross-checks whatever else the lead holds: VAT number with VIES, mail server and disposable domain, IBAN country and bank (the account holder is not checked), and the company name against the OFAC, EU and UN sanctions lists. Returns a verdict, a 0-100 lead score, flags and one action per flag. An input not given is not checked and never counts against the lead. |
 | `/v1/agent/check` | POST | $0.75 | Agent wallet check in one call: screens an EVM wallet against the OFAC SDN digital-currency address list, reads its Base USDC and ETH balance, looks up its ERC-8004 identity registration (and, given an agent id, that agent's owner and payment wallet) and lists open ERC-8004 feedback, which is not scored. Returns one verdict and each part's status; a part that could not be read says so. |
-| `/v1/sanctions/screen` | POST | $0.10 | Sanctions screen of a company or person name against the OFAC SDN, EU and UN sanctions lists, held locally and refreshed daily. Returns each matched entry: list, entry id, matched name, programmes, countries, listing date and match score. Exact normalised or word-order-insensitive name match only; a name match is not a determination. |
-| `/v1/entity/check` | POST | $0.85 | Full entity trust check across multiple verification layers: KVK/CBE registry, OpenSanctions, country risk (CPI/FATF), domain WHOIS, IBAN validation and EU VAT/VIES. Returns trust score 0-100 with cluster and recommendation. |
-| `/v1/risk/score` | POST | $0.65 | Quick risk score (0-100) for entity name + country. Lightweight check without full data source scan. |
+| `/v1/sanctions/screen` | POST | $0.11 | Sanctions screen of a company or person name against the OFAC SDN, EU and UN sanctions lists, held locally and refreshed daily. Returns each matched entry: list, entry id, matched name, programmes, countries, listing date and match score. Exact normalised or word-order-insensitive name match only; a name match is not a determination. |
+| `/v1/entity/check` | POST | $1.05 | Full entity trust check across multiple verification layers: KVK/CBE registry, OpenSanctions, country risk (CPI/FATF), domain WHOIS, IBAN validation and EU VAT/VIES. Returns trust score 0-100 with cluster and recommendation. |
+| `/v1/risk/score` | POST | $0.90 | Quick risk score (0-100) for entity name + country. Lightweight check without full data source scan. |
 | `/v1/entity/deep-check` | POST | $0.75 | Extended screening in up to three tiers. fresh ($0.75): politically exposed person and relative/close-associate (role.pep / role.rca) matches from OpenSanctions, with the match detail the standard entity check does not return, plus a Dutch Centraal Insolventieregister screen (NL only). enhanced ($1.50): the same plus adverse media screening against a global news index. If a source of the requested tier cannot be reached the call returns 503 and is not charged. |
-| `/v1/reports/entity` | POST | $1.50 | Per-entity report built from one real check's signals: identity, sanctions and PEP screening, domain signals, risk score, correlations with the caller's earlier reports, sources and an evidence hash. A source that did not answer is shown unavailable, never clean. |
+| `/v1/reports/entity` | POST | $1.85 | Per-entity report built from one real check's signals: identity, sanctions and PEP screening, domain signals, risk score, correlations with the caller's earlier reports, sources and an evidence hash. A source that did not answer is shown unavailable, never clean. |
 
 ### Reputation management
 
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
-| `/v1/reputation/score` | POST | $0.65 | Reputation scoring with Bayesian trust decay analysis. Tracks entity trust over time with confidence intervals. |
+| `/v1/reputation/score` | POST | $0.90 | Reputation scoring with Bayesian trust decay analysis. Tracks entity trust over time with confidence intervals. |
 | `/v1/reputation/history/{id}` | GET | $0.10 | Historical reputation trend data. Returns trust score timeline with change events and decay curves. |
 
 ### Wallet services
@@ -131,11 +131,11 @@ MCP session.
 
 | Endpoint | Method | Price | MCP tool |
 |----------|--------|-------|----------|
-| `/v1/mcp/check-entity` | POST | $0.85 | `check_entity` |
+| `/v1/mcp/check-entity` | POST | $1.05 | `check_entity` |
 | `/v1/mcp/check-agent` | POST | $0.00 | `check_agent` |
 | `/v1/mcp/trust-score` | POST | $0.00 | `get_trust_score` |
 | `/v1/mcp/verify-wallet` | POST | $0.00 | `verify_wallet` |
-| `/v1/mcp/risk-score` | POST | $0.65 | `get_risk_score` |
+| `/v1/mcp/risk-score` | POST | $0.90 | `get_risk_score` |
 
 ### API key tiers
 

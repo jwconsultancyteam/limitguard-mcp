@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "Limitguard Trust Intelligence",
   "description": "Entity verification, sanctions screening, and trust scoring for AI agents via x402 micropayments.",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "websiteUrl": "https://limitguard.ai",
   "icons": [
     {
@@ -248,7 +248,7 @@
     },
     {
       "name": "verify_lead",
-      "description": "Verify a NL/BE sales lead against the registers in one call: real and active, VAT, mail server, IBAN, sanctions; a 0-100 lead score. $0.24.",
+      "description": "Verify a NL/BE sales lead against the registers in one call: real and active, VAT, mail server, IBAN, sanctions; a 0-100 lead score. $0.27.",
       "inputSchema": {
         "type": "object",
         "properties": {
