@@ -1,6 +1,6 @@
 # Limitguard MCP server: installation
 
-Free sandbox key, no wallet. The sandbox covers entity, risk and KYB checks; Lead Verify and the agent check need a live key or an x402 payment. Lead Verify $0.24 per lead and agent check $0.75 per wallet; $0.10-1.50 per call; entity and risk checks $0.65-0.85 fresh ($1.50 KYB), $0.10 cached ($0.25 KYB) when available.
+Free sandbox key, no wallet. The sandbox covers entity, risk and KYB checks; Lead Verify and the agent check need a live key or an x402 payment. Lead Verify $0.27 per lead and agent check $0.75 per wallet; $0.11-1.85 per call; entity and risk checks $0.88-1.05 fresh ($1.50 KYB), $0.11 cached ($0.25 KYB) when available.
 
 No server process, no npm or Python package: this is a remote Streamable HTTP server.
 
@@ -47,4 +47,4 @@ without it the call is refused with a message saying how to get a key.
 - `get_risk_score`: Quick risk assessment without full trust check. Focuses on risk signals only.
 - `get_compliance_report`: Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, every finding as a ranked action, a per-source status table (ok / unavailable / error) and a report hash.
 - `check_agent_wallet`: Check a counterparty agent's EVM wallet in one call: OFAC SDN digital-currency address list match, Base USDC and ETH balance, ERC-8004 identity registration (and, given an agent id, that agent's owner and payment wallet) and open ERC-8004 feedback, which is not scored. $0.75.
-- `verify_lead`: Verify a NL/BE sales lead against the registers in one call: real and active, VAT, mail server, IBAN, sanctions; a 0-100 lead score. $0.24.
+- `verify_lead`: Verify a NL/BE sales lead against the registers in one call: real and active, VAT, mail server, IBAN, sanctions; a 0-100 lead score. $0.27.
