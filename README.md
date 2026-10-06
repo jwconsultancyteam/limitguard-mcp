@@ -74,20 +74,19 @@ Two things gate a `tools/call`, in this order:
 
 ## Full x402 API (direct HTTP)
 
-The 5 tools above are what the MCP server exposes over the Model Context Protocol. Clients that
-integrate directly over HTTP — instead of through an MCP client — can reach 18 x402-priced
-endpoints on `https://api.limitguard.ai`: the 13 REST endpoints below, plus the MCP tools' own
-`/v1/mcp/*` paths. All 18 are published in
-[/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json); only the 5 tools above
-are listed by `/.well-known/mcp.json`.
+The tools above are what the MCP server exposes over the Model Context Protocol. Clients that
+integrate directly over HTTP, instead of through an MCP client, can reach every x402-priced
+endpoint on `https://api.limitguard.ai`: the REST endpoints below, plus the MCP tools' own
+`/v1/mcp/*` paths. All of them are published in
+[/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json); `/.well-known/mcp.json`
+lists only the tools above.
 
 Most of the REST endpoints are capabilities the MCP tools do not expose, but two are the same
 check reached over plain HTTP: `/v1/entity/check` behind `check_entity` — the manifest describes
 `/v1/mcp/check-entity` as "same as `/v1/entity/check` with MCP-native interface" — and
-`/v1/risk/score` behind `get_risk_score`, at the same $0.65.
+`/v1/risk/score` behind `get_risk_score`, at the same price.
 
-Payment works the same way throughout: USDC on Base or Solana, pay-per-call. The 11 data endpoints
-below need no API key at all. The 4 `/v1/keys/upgrade/*` endpoints also take payment without one,
+Payment works the same way throughout: USDC on Base or Solana, pay-per-call. The data endpoints below need no API key at all. The `/v1/keys/upgrade/*` endpoints also take payment without one,
 but they act on an API key you already hold — see [API key tiers](#api-key-tiers).
 
 ### Trust intelligence
@@ -125,9 +124,10 @@ but they act on an API key you already hold — see [API key tiers](#api-key-tie
 
 ### MCP tool paths (direct HTTP)
 
-The 5 MCP tools are also reachable over plain HTTP at their own x402-priced paths — same
-capabilities and prices as the Tools table above, for clients that pay per call without opening an
-MCP session.
+The MCP tools that mirror a REST check are also reachable over plain HTTP at their own
+x402-priced `/v1/mcp/*` paths, with the same capabilities and prices as the Tools table above,
+for clients that pay per call without opening an MCP session. The other tools call one of the
+REST endpoints above directly.
 
 | Endpoint | Method | Price | MCP tool |
 |----------|--------|-------|----------|
@@ -140,10 +140,9 @@ MCP session.
 ### API key tiers
 
 Limitguard accepts two forms of payment: x402 per call, or a **paid-tier** API key whose
-subscription prepays the calls. Paying per call needs no API key on 13 of the 18 endpoints — the
-9 data endpoints above and the 4 `/v1/keys/upgrade/*` paths. The other 5 always want a key: the
-MCP transport takes `Authorization: Bearer` on every `tools/call`, and its `/v1/mcp/*` mirrors
-take `X-API-Key`.
+subscription prepays the calls. Paying per call needs no API key on the data endpoints above or the `/v1/keys/upgrade/*` paths.
+The MCP transport always wants one: it takes `Authorization: Bearer` on every `tools/call`, and
+its `/v1/mcp/*` mirrors take `X-API-Key`.
 
 A base key is free and self-service: `POST /v1/keys/create` with an email address, no payment and
 no existing key needed. It identifies you and tracks your usage; it does **not** pay for calls. A
