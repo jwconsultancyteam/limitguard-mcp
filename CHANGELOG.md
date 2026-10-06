@@ -295,7 +295,7 @@ array where it is now.
 
 ### Added
 
-- Initial listing for the LimitGuard Trust Intelligence MCP server: `server.json`,
+- Initial listing for the Limitguard Trust Intelligence MCP server: `server.json`,
   `smithery.yaml`, `glama.json`, README and licence, covering the five tools reachable
   at `https://api.limitguard.ai/mcp`.
 - `.gitignore`, and category and homepage metadata in `glama.json` (2026-03-02, released
