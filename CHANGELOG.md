@@ -25,6 +25,14 @@ Entries from 1.2.0 onward are written by `scripts/sync_public_repos.py` in
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [2.7.0] - 2026-10-06
+
+### Changed
+- Tool `check_entity` description updated.
+- Tool `get_risk_score` description updated.
+- `smithery.yaml` regenerated.
+- `llms-install.md` regenerated.
+
 ## [2.6.0] - 2026-10-06
 
 ### Added
