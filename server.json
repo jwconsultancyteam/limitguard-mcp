@@ -1,8 +1,8 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "ai.limitguard.api/trust-intelligence",
-  "title": "Limitguard Trust Intelligence",
-  "description": "Entity verification, sanctions screening, and trust scoring for AI agents via x402 micropayments.",
+  "title": "Limitguard Lead Verification",
+  "description": "Lead validation over MCP: KVK/KBO register, EU VAT, sanctions and email checks with sources.",
   "version": "2.6.0",
   "websiteUrl": "https://limitguard.ai",
   "icons": [

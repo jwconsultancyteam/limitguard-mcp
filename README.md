@@ -5,7 +5,7 @@
 
 # Limitguard MCP Server
 
-Trust Intelligence for AI agents. Entity verification, sanctions screening, and risk scoring via the [Model Context Protocol](https://modelcontextprotocol.io/).
+Lead validation over the [Model Context Protocol](https://modelcontextprotocol.io/): check the company behind each lead against the KVK (Netherlands) or KBO (Belgium) register, EU VAT (VIES), sanctions lists and its email domain, in one tool call. Company, sanctions and wallet checks for developers and AI agents sit beside it.
 
 **Server URL:** `https://api.limitguard.ai/mcp`
 **Transport:** Streamable HTTP (POST)
@@ -17,7 +17,7 @@ Trust Intelligence for AI agents. Entity verification, sanctions screening, and 
 
 ## Tools
 
-`tools/list` is public — connect and read it without any credential. These are
+`tools/list` is public: connect and read it without any credential. These are
 the names it returns, and the names `tools/call` accepts:
 
 | Tool | Description | Inputs |
@@ -34,15 +34,18 @@ the names it returns, and the names `tools/call` accepts:
 
 ## Pricing
 
-All tools are priced via [x402](https://www.x402.org/) micropayments (USDC on Base or Solana):
+A paid tool call is debited from your API key's prepaid balance, or paid per call with an
+[x402](https://www.x402.org/) micropayment (USDC on Base or Solana). The tools with their own
+`/v1/mcp/*` path are priced below; the other tools are priced at the REST endpoint they call,
+in [Full x402 API](#full-x402-api-direct-http).
 
 | Endpoint | Price |
 |----------|-------|
 | Entity Check (`/v1/mcp/check-entity`) | $1.05 |
 | Risk Score (`/v1/mcp/risk-score`) | $0.90 |
-| Check Agent (`/v1/mcp/check-agent`) | $0.00 — unimplemented / beta, placeholder data |
-| Trust Score (`/v1/mcp/trust-score`) | $0.00 — unimplemented / beta, placeholder data |
-| Verify Wallet (`/v1/mcp/verify-wallet`) | $0.00 — unimplemented / beta, placeholder data |
+| Check Agent (`/v1/mcp/check-agent`) | $0.00: hidden placeholder, not in `tools/list`; returns placeholder data |
+| Trust Score (`/v1/mcp/trust-score`) | $0.00, free (your own stored score) |
+| Verify Wallet (`/v1/mcp/verify-wallet`) | $0.00, free (real wallet screening) |
 
 ## Authentication
 
@@ -50,7 +53,7 @@ Two things gate a `tools/call`, in this order:
 
 1. **An API key**, as `Authorization: Bearer <key>`. Without one every call comes
    back `Authentication required. Provide API key via Authorization: Bearer
-   <lg_live_...> header.` Get a free one — no payment, no card:
+   <lg_live_...> header.` Get a free one (no payment, no card):
 
    ```bash
    curl -X POST https://api.limitguard.ai/v1/keys/create \
@@ -60,18 +63,20 @@ Two things gate a `tools/call`, in this order:
 
    That returns a `free`-tier key, which is the key the Quick Start configs below
    expect. Asking for `"tier": "sandbox"` instead returns a key that answers with
-   mock data — see the next point before you use one here.
+   mock data; see the next point before you use one here.
 
 2. **Payment, on the free and sandbox tiers only.** Send the x402 proof as
    `PAYMENT-SIGNATURE` (x402 v2) or `X-PAYMENT` (v1), alongside the Bearer key.
-   A paid subscription (indie and up) covers usage and needs no per-call payment.
+   A key with a prepaid balance (indie and up) is debited per call instead and
+   needs no per-call payment. There is no subscription; see
+   [API keys and prepaid balance](#api-keys-and-prepaid-balance).
 
    A sandbox key does *not* lift the payment requirement on this transport: it
    owes x402 per call exactly as a `free` key does, and it answers with mock
    data rather than a real check. Paying for one over MCP spends real USDC on a
    mock answer. Where a sandbox key is worth having is the REST mirrors under
    `/v1/mcp/*` (sent as `X-API-Key`, not Bearer), which serve the mock response
-   before the payment check — a way to exercise the request and response shapes,
+   before the payment check: a way to exercise the request and response shapes,
    not a cheap source of real checks.
 
 ## Full x402 API (direct HTTP)
@@ -83,15 +88,15 @@ endpoint on `https://api.limitguard.ai`: the REST endpoints below, plus the MCP 
 [/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json); `/.well-known/mcp.json`
 lists only the tools above.
 
-Most of the REST endpoints are capabilities the MCP tools do not expose, but two are the same
-check reached over plain HTTP: `/v1/entity/check` behind `check_entity` — the manifest describes
-`/v1/mcp/check-entity` as "same as `/v1/entity/check` with MCP-native interface" — and
-`/v1/risk/score` behind `get_risk_score`, at the same price.
+Most of the REST endpoints are capabilities the MCP tools do not expose, but two run the same
+engine over plain HTTP: `/v1/entity/check` behind `check_entity` (the MCP tool takes the entity
+name, country, KVK number and domain only, so no IBAN or VAT), and `/v1/risk/score` behind
+`get_risk_score`, at the same price.
 
 Payment works the same way throughout: USDC on Base or Solana, pay-per-call. The data endpoints below need no API key at all. The `/v1/keys/upgrade/*` endpoints also take payment without one,
-but they act on an API key you already hold — see [API key tiers](#api-key-tiers).
+but they act on an API key you already hold; see [API keys and prepaid balance](#api-keys-and-prepaid-balance).
 
-### Trust intelligence
+### Lead and company checks
 
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
@@ -139,34 +144,37 @@ REST endpoints above directly.
 | `/v1/mcp/verify-wallet` | POST | $0.00 | `verify_wallet` |
 | `/v1/mcp/risk-score` | POST | $0.90 | `get_risk_score` |
 
-### API key tiers
+### API keys and prepaid balance
 
-Limitguard accepts two forms of payment: x402 per call, or a **paid-tier** API key whose
-subscription prepays the calls. Paying per call needs no API key on the data endpoints above or the `/v1/keys/upgrade/*` paths.
+Limitguard accepts two forms of payment: x402 per call, or an API key with a **prepaid balance**
+that each priced call is debited from. There is no subscription. Paying per call needs no API key on the data endpoints above or the `/v1/keys/upgrade/*` paths.
 The MCP transport always wants one: it takes `Authorization: Bearer` on every `tools/call`, and
 its `/v1/mcp/*` mirrors take `X-API-Key`.
 
 A base key is free and self-service: `POST /v1/keys/create` with an email address, no payment and
 no existing key needed. It identifies you and tracks your usage; it does **not** pay for calls. A
-`free`-tier key still owes x402 on every paid endpoint, on REST exactly as on MCP. The
-`monthly_limit` it reports is a ceiling on how many calls it may make, not an allowance of free
-ones. A `sandbox` key is also free and returns mock data, never a real check — over MCP it owes
+`free`-tier key holds no balance and still owes x402 on every paid endpoint, on REST exactly as on
+MCP. The `monthly_limit` it reports is a ceiling on how many calls it may make, not an allowance of
+free ones. A `sandbox` key is also free and returns mock data, never a real check. Over MCP it owes
 x402 like any other free key, so it earns its keep only against the REST mirrors.
 
-The endpoints below take an x402 payment to move a key onto a paid tier, which is what lifts the
-per-call charge. On a paid tier `monthly_limit` is the number of calls the subscription covers.
-The manifest prices the upgrade call itself and says nothing about what happens at the end of a
-month, so confirm the renewal terms before budgeting against the figures below.
+The endpoints below take an x402 payment, credit the same amount 1:1 to the prepaid balance of a
+key you already hold, and set its tier label. Each priced call is then debited from that balance
+at the prices above, with no per-call x402 payment. When the balance is too low for a call, that
+call answers 402 with an x402 quote and the top-up path, and `POST /v1/keys/topup/{usd}`
+adds any whole-dollar amount from $5. On every tier `monthly_limit` is an abuse limit, not an
+allowance of included calls.
 
-| Endpoint | Method | Price | Tier | `monthly_limit` |
-|----------|--------|-------|------|-----------------|
+| Endpoint | Method | Price | Tier label | `monthly_limit` (abuse limit) |
+|----------|--------|-------|------------|-------------------------------|
 | `/v1/keys/upgrade/indie` | POST | $29 | Indie | 1,000 calls/mo |
 | `/v1/keys/upgrade/starter` | POST | $99 | Starter | 10,000 calls/mo |
 | `/v1/keys/upgrade/growth` | POST | $299 | Growth | 50,000 calls/mo |
 | `/v1/keys/upgrade/pro` | POST | $999 | Pro | 250,000 calls/mo |
 
-Prices and descriptions above mirror the live x402 manifest as of 2026-09-05. The manifest is the
-source of truth — fetch it if you need the current schema for any endpoint.
+Prices and descriptions above are generated from the service and were last checked against the
+live x402 manifest on 2026-10-06. The manifest is the source of truth: fetch it if you need the
+current schema for any endpoint.
 
 ## Quick Start
 
@@ -224,25 +232,25 @@ sending `Authorization: Bearer <key>` on every `tools/call`.
 | x402 Pricing | [/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json) |
 | Health | [/health](https://api.limitguard.ai/health) |
 
-The service publishes two tool cards, and they do not agree. Both list the same five
+The service publishes two tool cards, and they do not fully agree. Both list the same
 tools, taking the same required arguments, so a `tools/call` written against either one
-works — but the descriptions and the argument wording differ between them. The Tools
+works, but the descriptions and the argument wording differ between them. The Tools
 table above and this repository's `server.json` are generated from the **server card**,
 which is the one to read when the two disagree. Reconciling them is the service's to fix.
 
 ## Use Cases
 
-- **KYC/KYB Automation** — AI agents verify business entities before transactions
-- **Sanctions Screening** — Check entities against OpenSanctions watchlists
-- **Agent-to-Agent Trust** — Verify counterparty agent reputation before collaboration
-- **Wallet Verification** — Check blockchain wallet risk before on-chain transactions
-- **Due Diligence** — Automated entity research with trust scoring
+- **Lead validation:** check the company behind each lead (KVK or KBO register, EU VAT via VIES, sanctions lists and email domain) before it reaches a client, and get a verdict, a 0-100 lead score and flags (`verify_lead`).
+- **Company checks:** developers and AI agents verify a business entity before a deal or a payment (`check_entity`, `get_risk_score`), or build a per-entity report with every source's status (`get_compliance_report`).
+- **Sanctions screening:** screen a company or person name against the OFAC, EU and UN lists (`sanctions_preview`, `sanctions_screen`).
+- **Agent-to-agent checks:** check a counterparty agent's wallet and ERC-8004 identity before working with it (`check_agent_wallet`).
+- **Wallet screening:** screen a wallet address before an on-chain payment (`verify_wallet`).
 
 ## Security
 
 - HTTPS with TLS 1.3
 - x402 payment protocol for per-call billing (no stored payment credentials)
-- GDPR-compliant (EU-hosted, data minimization)
+- Hosted in the EU (API and dashboard in the EU, database in Ireland); data minimisation
 - All tools are read-only (no data modification)
 - Rate limited per payment (abuse-proof)
 
