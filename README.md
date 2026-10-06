@@ -68,7 +68,7 @@ Two things gate a `tools/call`, in this order:
 2. **Payment, on the free and sandbox tiers only.** Send the x402 proof as
    `PAYMENT-SIGNATURE` (x402 v2) or `X-PAYMENT` (v1), alongside the Bearer key.
    A key with a prepaid balance (indie and up) is debited per call instead and
-   needs no per-call payment. There is no subscription; see
+   needs no per-call payment. API keys have no subscription; see
    [API keys and prepaid balance](#api-keys-and-prepaid-balance).
 
    A sandbox key does *not* lift the payment requirement on this transport: it
@@ -147,7 +147,7 @@ REST endpoints above directly.
 ### API keys and prepaid balance
 
 Limitguard accepts two forms of payment: x402 per call, or an API key with a **prepaid balance**
-that each priced call is debited from. There is no subscription. Paying per call needs no API key on the data endpoints above or the `/v1/keys/upgrade/*` paths.
+that each priced call is debited from. API keys and x402 have no subscription (the Limitguard dashboard also has optional monthly plans, paid in euros). Paying per call needs no API key on the data endpoints above or the `/v1/keys/upgrade/*` paths.
 The MCP transport always wants one: it takes `Authorization: Bearer` on every `tools/call`, and
 its `/v1/mcp/*` mirrors take `X-API-Key`.
 

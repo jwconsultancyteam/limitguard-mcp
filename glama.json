@@ -2,7 +2,7 @@
   "$schema": "https://glama.ai/mcp/schemas/server.json",
   "name": "limitguard",
   "title": "Limitguard Lead Verification",
-  "description": "Limitguard is a lead validation service for lead generation agencies, B2B marketing and sales teams: it checks the company behind each lead against official business registers (full coverage in the Netherlands and Belgium), EU VAT and sanctions lists, with website age in the company check, and returns proceed, review or block with the source on every line. Developers and AI agents can use its HTTP API, MCP server and A2A service, hosted in the EU. Over MCP: lead validation (verify_lead) plus company, sanctions and wallet checks. REST is x402 pay-per-call with no signup. MCP needs a Bearer API key (free to create at POST /v1/keys/create); a key with a prepaid balance is debited per call, and a key without one pays per call with x402. No subscription.",
+  "description": "Limitguard is a lead validation service for lead generation agencies, B2B marketing and sales teams: it checks the company behind each lead against official business registers (full coverage in the Netherlands and Belgium), EU VAT and sanctions lists, with website age in the company check, and returns proceed, review or block with the source on every line. Developers and AI agents can use its HTTP API, MCP server and A2A service, hosted in the EU. Over MCP: lead validation (verify_lead) plus company, sanctions and wallet checks. REST is x402 pay-per-call with no signup. MCP needs a Bearer API key (free to create at POST /v1/keys/create); a key with a prepaid balance is debited per call, and a key without one pays per call with x402. API keys have no subscription.",
   "homepage": "https://limitguard.ai",
   "license": "MIT",
   "categories": [
@@ -16,7 +16,7 @@
   ],
   "auth": {
     "rest": "x402 pay-per-call, no API key, no signup",
-    "mcp": "Authorization: Bearer <key>; create one free at POST https://api.limitguard.ai/v1/keys/create, which returns an lg_live_ key on the default free tier and an lg_sandbox_ key when the body asks for \"tier\": \"sandbox\". Both authenticate, though the server's own error text names only lg_live_. Free and sandbox keys hold no balance and also send PAYMENT-SIGNATURE (x402 v2) or X-PAYMENT (v1) per call. A key with a prepaid balance (indie and up, credited 1:1 by POST /v1/keys/upgrade/{tier} or POST /v1/keys/topup/{usd}) is debited per call instead. There is no subscription; the monthly_limit on a key is an abuse limit, not an allowance of included calls.",
+    "mcp": "Authorization: Bearer <key>; create one free at POST https://api.limitguard.ai/v1/keys/create, which returns an lg_live_ key on the default free tier and an lg_sandbox_ key when the body asks for \"tier\": \"sandbox\". Both authenticate, though the server's own error text names only lg_live_. Free and sandbox keys hold no balance and also send PAYMENT-SIGNATURE (x402 v2) or X-PAYMENT (v1) per call. A key with a prepaid balance (indie and up, credited 1:1 by POST /v1/keys/upgrade/{tier} or POST /v1/keys/topup/{usd}) is debited per call instead. API keys have no subscription; the monthly_limit on a key is an abuse limit, not an allowance of included calls.",
     "documentation": "https://docs.limitguard.ai/authentication"
   },
   "pricing": {
