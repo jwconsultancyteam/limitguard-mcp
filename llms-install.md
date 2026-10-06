@@ -41,10 +41,10 @@ without it the call is refused with a message saying how to get a key.
 
 ## Tools
 
-- `check_entity`: Full trust intelligence check on a business entity. Returns trust score (0-100), risk level, and recommendation.
+- `check_entity`: Company check on a business: sanctions screening and country risk, the Dutch KVK register for an NL company, and the website domain when you send it. Returns a 0-100 score, a risk level and a recommendation.
 - `get_trust_score`: Look up your own most recent trust score for an entity you checked before, from your stored checks: score, level, when, which product, trend and how many checks are on record. Runs no new check and calls no data source. Free ($0).
 - `verify_wallet`: Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. Free ($0). Supports EVM and Solana addresses.
-- `get_risk_score`: Quick risk assessment without full trust check. Focuses on risk signals only.
+- `get_risk_score`: Quick risk score from sanctions screening and country risk only, without the register or domain lookups of check_entity.
 - `get_compliance_report`: Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, every finding as a ranked action, a per-source status table (ok / unavailable / error) and a report hash.
 - `sanctions_preview`: Free yes/no sanctions preview against the local OFAC SDN, EU and UN lists. Returns possible_match, lists_checked and list_dates only, never an entry. 10 per caller per UTC day.
 - `sanctions_screen`: Sanctions screen against the local OFAC SDN, EU and UN lists: matched entries with list, entry id, programmes, countries, listing date and match score. A name match is not a determination.
