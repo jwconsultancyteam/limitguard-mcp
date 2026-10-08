@@ -79,7 +79,7 @@
         ]
       },
       "annotations": {
-        "readOnlyHint": true,
+        "readOnlyHint": false,
         "destructiveHint": false,
         "idempotentHint": false,
         "openWorldHint": true
@@ -154,7 +154,7 @@
         ]
       },
       "annotations": {
-        "readOnlyHint": true,
+        "readOnlyHint": false,
         "destructiveHint": false,
         "idempotentHint": false,
         "openWorldHint": false
@@ -262,7 +262,7 @@
         ]
       },
       "annotations": {
-        "readOnlyHint": true,
+        "readOnlyHint": false,
         "destructiveHint": false,
         "idempotentHint": false,
         "openWorldHint": true
@@ -292,7 +292,7 @@
         ]
       },
       "annotations": {
-        "readOnlyHint": true,
+        "readOnlyHint": false,
         "destructiveHint": false,
         "idempotentHint": false,
         "openWorldHint": true
@@ -370,7 +370,7 @@
         ]
       },
       "annotations": {
-        "readOnlyHint": true,
+        "readOnlyHint": false,
         "destructiveHint": false,
         "idempotentHint": false,
         "openWorldHint": true
