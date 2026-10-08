@@ -309,6 +309,10 @@ def login_off_argv(binary, domain, registry, key):
                             scrubbed = scrub_stack(
                                 mem, stack_ranges(pid), needle
                             )
+                        # The key is on this command line by construction, so
+                        # zero patches means a read failed, not that it is gone.
+                        if not scrubbed:
+                            raise RuntimeError("no copy of the key found to scrub in the child")
                         print(
                             f"key hidden: scrubbed {scrubbed} /proc-visible "
                             "cop(y|ies).",
@@ -374,9 +378,13 @@ def main():
     os.environ.pop("MCP_OFF_ARGV_KEY", None)
     try:
         with open("/proc/self/mem", "r+b", buffering=0) as mem:
-            scrub_stack(mem, stack_ranges(os.getpid()), key.encode())
+            own = scrub_stack(mem, stack_ranges(os.getpid()), key.encode())
     except OSError as exc:
         print(f"::error::could not scrub own environ copy ({exc}); login refused.", file=sys.stderr)
+        return 1
+    # The key arrived in this process's environment, so its original copy is there.
+    if not own:
+        print("::error::no copy of the key found in own environ to scrub; login refused.", file=sys.stderr)
         return 1
 
     return login_off_argv(args.binary, args.domain, args.registry, key)
