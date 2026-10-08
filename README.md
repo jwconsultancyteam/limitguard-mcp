@@ -178,23 +178,15 @@ current schema for any endpoint.
 
 ## Quick Start
 
-### Claude Desktop
+### Claude (Desktop and claude.ai)
 
-Add to your `claude_desktop_config.json`:
+This is a remote server, so it is added as a custom connector, not in
+`claude_desktop_config.json` (that file is for local servers only):
 
-```json
-{
-  "mcpServers": {
-    "limitguard": {
-      "type": "url",
-      "url": "https://api.limitguard.ai/mcp",
-      "headers": {
-        "Authorization": "Bearer YOUR_LIMITGUARD_KEY"
-      }
-    }
-  }
-}
-```
+1. Open **Customize > Connectors**, then **+ Add > Add custom connector**.
+   On a Team or Enterprise plan an owner adds it under **Organization settings > Connectors**.
+2. URL: `https://api.limitguard.ai/mcp`
+3. Under **Request headers**, add `Authorization` with the value `Bearer YOUR_LIMITGUARD_KEY`.
 
 ### Cursor
 

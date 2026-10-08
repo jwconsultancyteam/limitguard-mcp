@@ -46,11 +46,11 @@ entry stops, and no thread can hold connect's syscall number (203) at an
 entry stop before the net stack runs -- which only happens after parsing and
 signing.
 
-Deliberately fail-open: any error in the tracing/scrub machinery produces a
-::warning:: and the login proceeds exactly as it did before this script
-existed. A release must never fail because of its key-hiding wrapper; the
-worst case is the old exposure level, which is also what an unexpected kernel
-or CLI behaviour would produce.
+Fail-closed: any error in the tracing/scrub machinery, an architecture without
+a scrub implementation, or a failed scrub of this process's own environment
+copy stops the login with ::error:: and kills the child before it can finish.
+The runner pool is shared, so a key left on a command line is readable by
+other jobs; a failed release is re-run, a leaked key has to be rotated.
 
 Usage:
     MCP_OFF_ARGV_KEY=<64 hex chars> python3 scripts/off-argv-login.py \
@@ -309,6 +309,10 @@ def login_off_argv(binary, domain, registry, key):
                             scrubbed = scrub_stack(
                                 mem, stack_ranges(pid), needle
                             )
+                        # The key is on this command line by construction, so
+                        # zero patches means a read failed, not that it is gone.
+                        if not scrubbed:
+                            raise RuntimeError("no copy of the key found to scrub in the child")
                         print(
                             f"key hidden: scrubbed {scrubbed} /proc-visible "
                             "cop(y|ies).",
@@ -330,12 +334,18 @@ def login_off_argv(binary, domain, registry, key):
             if stops > 5_000_000:
                 raise RuntimeError("no child exit seen after 5M stops")
     except (OSError, RuntimeError) as exc:
-        # Fail open: the release flow must not break because of the wrapper.
         print(
-            f"::warning::key-hiding scrub failed ({exc}); login continues with "
-            "the key on the child's command line, the pre-existing exposure.",
+            f"::error::key-hiding scrub failed ({exc}); login stopped so the key "
+            "does not stay on the child's command line. Re-run the workflow.",
             file=sys.stderr,
         )
+        try:
+            os.kill(pid, signal.SIGKILL)
+        except OSError:
+            pass
+        detach_all(pid)
+        reap(pid)
+        return 1
     detach_all(pid)
     return reap(pid)
 
@@ -358,34 +368,24 @@ def main():
 
     if ARCH not in CONNECT_NR:
         print(
-            f"::warning::key-hiding scrub not implemented for {ARCH}; login "
-            "continues with the key on the child's command line.",
+            f"::error::key-hiding scrub not implemented for {ARCH}; login refused "
+            "so the key never reaches a command line. Run this job on an ARM64 runner.",
             file=sys.stderr,
         )
-        os.environ.pop("MCP_OFF_ARGV_KEY", None)
-        os.execve(
-            args.binary,
-            [
-                args.binary,
-                "login",
-                "http",
-                "--domain",
-                args.domain,
-                "--private-key",
-                key,
-                "--registry",
-                args.registry,
-            ],
-            os.environ,
-        )
+        return 1
 
     # The key leaves the /proc-visible environment before any child exists.
     os.environ.pop("MCP_OFF_ARGV_KEY", None)
     try:
         with open("/proc/self/mem", "r+b", buffering=0) as mem:
-            scrub_stack(mem, stack_ranges(os.getpid()), key.encode())
+            own = scrub_stack(mem, stack_ranges(os.getpid()), key.encode())
     except OSError as exc:
-        print(f"::warning::could not scrub own environ copy: {exc}", file=sys.stderr)
+        print(f"::error::could not scrub own environ copy ({exc}); login refused.", file=sys.stderr)
+        return 1
+    # The key arrived in this process's environment, so its original copy is there.
+    if not own:
+        print("::error::no copy of the key found in own environ to scrub; login refused.", file=sys.stderr)
+        return 1
 
     return login_off_argv(args.binary, args.domain, args.registry, key)
 

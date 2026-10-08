@@ -20,8 +20,8 @@ listing had never stated the arguments, so a caller reading it gained something 
 not act on before. Descriptions changed in the same release, which is a patch on its own;
 the higher level wins.
 
-Entries from 1.2.0 onward are written by `scripts/sync_public_repos.py` in
-`jwconsultancyteam/limitguard-ai`, which renders this repository from that service's
+Entries from 1.2.0 onward are written by a sync script in the service's own repository,
+which renders this repository from that service's
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
@@ -211,7 +211,7 @@ for whoever reads it either way.
   Both authenticate; only the server's error string still names `lg_live_`. Both prefixes
   and the request that produces each are stated now.
 - Each placeholder's pricing note said charging "is suspended" while the same entry
-  priced the tool at 0.10. limitguard-ai#206 decided on the suspension; the code has not
+  priced the tool at 0.10. The service decided on the suspension; the code has not
   shipped, and the live manifest still prices all three at 0.10. The note now separates
   the decision from what the API currently charges.
 
@@ -230,7 +230,7 @@ and this section are what make the change reach the tag.
 - "API key tiers" said an API key carries a monthly call allowance. A `free`-tier key is
   identity and usage tracking: it owes x402 on every paid endpoint, on REST exactly as on
   MCP, and the `monthly_limit` it reports is a ceiling on calls rather than a grant of free
-  ones. REST enforced none of that until limitguard-ai#223 closed the bypass.
+  ones. REST enforced none of that until the service closed the bypass.
 - The `POST /v1/keys/create` example asked for `"tier": "sandbox"`, and the Quick Start
   configs then wired that key into `Authorization: Bearer`. A reader following the README
   end to end paid x402 for mock answers. The example creates the `free` key those configs
