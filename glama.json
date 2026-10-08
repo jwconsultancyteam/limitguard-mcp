@@ -1,0 +1,155 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "name": "limitguard",
+  "title": "Limitguard Lead Verification",
+  "description": "Limitguard is a lead validation service for lead generation agencies, B2B marketing and sales teams: it checks the company behind each lead against official business registers (full coverage in the Netherlands and Belgium), EU VAT and sanctions lists, with website age in the company check, and returns proceed, review or block with the source on every line. Developers and AI agents can use its HTTP API, MCP server and A2A service, hosted in the EU. Over MCP: lead validation (verify_lead) plus company, sanctions and wallet checks. REST is x402 pay-per-call with no signup. MCP needs a Bearer API key (free to create at POST /v1/keys/create); a key with a prepaid balance is debited per call, and a key without one pays per call with x402. API keys have no subscription.",
+  "homepage": "https://limitguard.ai",
+  "license": "MIT",
+  "categories": [
+    "compliance",
+    "risk",
+    "finance",
+    "security"
+  ],
+  "maintainers": [
+    "jwconsultancyteam"
+  ],
+  "auth": {
+    "rest": "x402 pay-per-call, no API key, no signup",
+    "mcp": "Authorization: Bearer <key>; create one free at POST https://api.limitguard.ai/v1/keys/create, which returns an lg_live_ key on the default free tier and an lg_sandbox_ key when the body asks for \"tier\": \"sandbox\". Both authenticate, though the server's own error text names only lg_live_. Free and sandbox keys hold no balance and also send PAYMENT-SIGNATURE (x402 v2) or X-PAYMENT (v1) per call. A key with a prepaid balance (indie and up, credited 1:1 by POST /v1/keys/upgrade/{tier} or POST /v1/keys/topup/{usd}) is debited per call instead. API keys have no subscription; the monthly_limit on a key is an abuse limit, not an allowance of included calls.",
+    "documentation": "https://docs.limitguard.ai/authentication"
+  },
+  "pricing": {
+    "currency": "USDC",
+    "networks": [
+      "eip155:8453",
+      "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp"
+    ],
+    "testnet_supported": false,
+    "source_of_truth": "https://api.limitguard.ai/.well-known/x402.json",
+    "note": "Networks and testnet_supported mirror payment in the x402 manifest. Tools, descriptions and prices below mirror the live MCP server card (/.well-known/mcp/server-card.json) and x402 manifest as of 2026-10-06; a tool priced at 0 is free. check_agent, a $0 placeholder, stays callable but is hidden from tools/list and the server card, so it is not listed. The x402 manifest is authoritative; fetch it for current values."
+  },
+  "tools": [
+    {
+      "name": "verify_lead",
+      "title": "Verify a sales lead",
+      "description": "Verify a NL/BE sales lead against the registers in one call: real and active, VAT, mail server, IBAN, sanctions; a 0-100 lead score. $0.27.",
+      "inputs": [
+        "country (required)",
+        "company_number",
+        "name",
+        "vat_number",
+        "email",
+        "domain",
+        "address",
+        "iban",
+        "phone",
+        "target_industries",
+        "target_size"
+      ],
+      "price_usdc": 0.27,
+      "status": "live"
+    },
+    {
+      "name": "check_entity",
+      "title": "Check entity trust",
+      "description": "Company check on a business: sanctions screening and country risk, the Dutch KVK register for an NL company, and the website domain when you send it. Returns trust_score (0-100, 100 = best), trust_level (high means low risk), cluster, recommendation, confidence, top_factors and sources_checked.",
+      "inputs": [
+        "entity_name (required)",
+        "country (required)",
+        "kvk_number",
+        "domain"
+      ],
+      "price_usdc": 1.05,
+      "status": "live"
+    },
+    {
+      "name": "get_trust_score",
+      "title": "Get stored trust score",
+      "description": "Look up your own most recent trust score for an entity you checked before, from your stored checks: score, level, when, which product, trend and how many checks are on record. Runs no new check and calls no data source. Free ($0).",
+      "inputs": [
+        "entity_id (required)"
+      ],
+      "price_usdc": 0.0,
+      "status": "live",
+      "pricing_note": "Free: looks up your own most recent stored score; runs no new check."
+    },
+    {
+      "name": "verify_wallet",
+      "title": "Screen wallet",
+      "description": "Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. Free ($0). Supports EVM and Solana addresses.",
+      "inputs": [
+        "wallet_address (required)",
+        "chain_id"
+      ],
+      "price_usdc": 0.0,
+      "status": "live",
+      "pricing_note": "Free: real wallet screening."
+    },
+    {
+      "name": "get_risk_score",
+      "title": "Get risk score",
+      "description": "Quick risk score from sanctions screening and country risk only, without the register or domain lookups of check_entity. Returns risk_score (0-100, 100 = riskiest), risk_level (high means high risk, the reverse of check_entity's trust_level), sanctions_match and fatf_status; no recommendation or factors.",
+      "inputs": [
+        "entity_name (required)",
+        "country (required)"
+      ],
+      "price_usdc": 0.9,
+      "status": "live"
+    },
+    {
+      "name": "get_compliance_report",
+      "title": "Get compliance report",
+      "description": "Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, every finding as a ranked action, a per-source status table (ok / unavailable / error) and a report hash.",
+      "inputs": [
+        "entity_name",
+        "country",
+        "kvk_number",
+        "cbe_number",
+        "vat_number",
+        "domain",
+        "iban",
+        "wallet_address",
+        "wallet_chain",
+        "check_id"
+      ],
+      "price_usdc": 1.85,
+      "status": "live"
+    },
+    {
+      "name": "sanctions_preview",
+      "title": "Sanctions preview",
+      "description": "Free yes/no sanctions preview against the local OFAC SDN, EU and UN lists. Returns possible_match, lists_checked and list_dates only, never an entry. 10 per caller per UTC day.",
+      "inputs": [
+        "name (required)",
+        "country"
+      ],
+      "price_usdc": 0.0,
+      "status": "live",
+      "pricing_note": "Free: yes/no preview, 10 per caller per UTC day."
+    },
+    {
+      "name": "sanctions_screen",
+      "title": "Sanctions screen",
+      "description": "Sanctions screen against the local OFAC SDN, EU and UN lists: matched entries with list, entry id, programmes, countries, listing date and match score. A name match is not a determination.",
+      "inputs": [
+        "name (required)",
+        "country"
+      ],
+      "price_usdc": 0.11,
+      "status": "live"
+    },
+    {
+      "name": "check_agent_wallet",
+      "title": "Check agent wallet",
+      "description": "Check a counterparty agent's EVM wallet in one call: OFAC SDN digital-currency address list match, Base USDC and ETH balance, ERC-8004 identity registration (and, given an agent id, that agent's owner and payment wallet) and open ERC-8004 feedback, which is not scored. $0.75.",
+      "inputs": [
+        "wallet (required)",
+        "agent_id",
+        "domain"
+      ],
+      "price_usdc": 0.75,
+      "status": "live"
+    }
+  ]
+}

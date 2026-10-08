@@ -1,0 +1,380 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "ai.limitguard.api/trust-intelligence",
+  "title": "Limitguard Lead Verification",
+  "description": "Lead validation over MCP: KVK/KBO register, EU VAT, sanctions and email checks with sources.",
+  "version": "2.8.0",
+  "websiteUrl": "https://limitguard.ai",
+  "icons": [
+    {
+      "src": "https://limitguard.ai/icon-512.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "512x512"
+      ]
+    },
+    {
+      "src": "https://limitguard.ai/assets/brand/mark.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ],
+      "theme": "light"
+    },
+    {
+      "src": "https://limitguard.ai/assets/brand/mark-dark.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ],
+      "theme": "dark"
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/jwconsultancyteam/limitguard-mcp",
+    "source": "github"
+  },
+  "packages": [],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.limitguard.ai/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Bearer lg_live_... -- the full header value, 'Bearer ' included. Free key: POST https://api.limitguard.ai/v1/keys/create with an email.",
+          "isRequired": true,
+          "isSecret": true
+        }
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "check_entity",
+      "description": "Company check on a business: sanctions screening and country risk, the Dutch KVK register for an NL company, and the website domain when you send it. Returns trust_score (0-100, 100 = best), trust_level (high means low risk), cluster, recommendation, confidence, top_factors and sources_checked.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entity_name": {
+            "type": "string",
+            "description": "Full legal name of the entity"
+          },
+          "country": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code"
+          },
+          "kvk_number": {
+            "type": "string",
+            "description": "Optional Dutch KVK number (8 digits)"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Optional company website domain"
+          }
+        },
+        "required": [
+          "entity_name",
+          "country"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_trust_score",
+      "description": "Look up your own most recent trust score for an entity you checked before, from your stored checks: score, level, when, which product, trend and how many checks are on record. Runs no new check and calls no data source. Free ($0).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entity_id": {
+            "type": "string",
+            "description": "Entity name, as sent to check_entity"
+          }
+        },
+        "required": [
+          "entity_id"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "verify_wallet",
+      "description": "Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. Free ($0). Supports EVM and Solana addresses.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "wallet_address": {
+            "type": "string",
+            "description": "Blockchain wallet address"
+          },
+          "chain_id": {
+            "type": "string",
+            "description": "CAIP-2 chain ID (default: eip155:8453 for Base); base, eth, solana, btc also accepted"
+          }
+        },
+        "required": [
+          "wallet_address"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "get_risk_score",
+      "description": "Quick risk score from sanctions screening and country risk only, without the register or domain lookups of check_entity. Returns risk_score (0-100, 100 = riskiest), risk_level (high means high risk, the reverse of check_entity's trust_level), sanctions_match and fatf_status; no recommendation or factors.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entity_name": {
+            "type": "string",
+            "description": "Full legal name of the entity"
+          },
+          "country": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code"
+          }
+        },
+        "required": [
+          "entity_name",
+          "country"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "get_compliance_report",
+      "description": "Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, every finding as a ranked action, a per-source status table (ok / unavailable / error) and a report hash.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "entity_name": {
+            "type": "string",
+            "description": "Full legal name (with country; omit when sending check_id)"
+          },
+          "country": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code"
+          },
+          "kvk_number": {
+            "type": "string",
+            "description": "Optional Dutch KVK number (8 digits)"
+          },
+          "cbe_number": {
+            "type": "string",
+            "description": "Optional Belgian CBE number (0XXX.XXX.XXX or 10 digits)"
+          },
+          "vat_number": {
+            "type": "string",
+            "description": "Optional EU VAT number"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Optional company website domain"
+          },
+          "iban": {
+            "type": "string",
+            "description": "Optional IBAN (never stored raw)"
+          },
+          "wallet_address": {
+            "type": "string",
+            "description": "Optional crypto wallet address (format check only)"
+          },
+          "wallet_chain": {
+            "type": "string",
+            "description": "Optional chain for wallet_address (eth, base, btc, sol, ...)"
+          },
+          "check_id": {
+            "type": "string",
+            "description": "Id of a check from an earlier report, instead of identifiers"
+          }
+        },
+        "required": []
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "sanctions_preview",
+      "description": "Free yes/no sanctions preview against the local OFAC SDN, EU and UN lists. Returns possible_match, lists_checked and list_dates only, never an entry. 10 per caller per UTC day.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Company or person name to screen"
+          },
+          "country": {
+            "type": "string",
+            "description": "Optional ISO 3166-1 alpha-2 country code (orders matches, never excludes one)"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "sanctions_screen",
+      "description": "Sanctions screen against the local OFAC SDN, EU and UN lists: matched entries with list, entry id, programmes, countries, listing date and match score. A name match is not a determination.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Company or person name to screen"
+          },
+          "country": {
+            "type": "string",
+            "description": "Optional ISO 3166-1 alpha-2 country code (orders matches, never excludes one)"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "check_agent_wallet",
+      "description": "Check a counterparty agent's EVM wallet in one call: OFAC SDN digital-currency address list match, Base USDC and ETH balance, ERC-8004 identity registration (and, given an agent id, that agent's owner and payment wallet) and open ERC-8004 feedback, which is not scored. $0.75.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "wallet": {
+            "type": "string",
+            "description": "EVM wallet address (0x + 40 hex characters)"
+          },
+          "agent_id": {
+            "type": "string",
+            "description": "Optional ERC-8004 agentId (decimal) the wallet claims"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Optional website domain the agent gives for itself (e.g. example.com)"
+          }
+        },
+        "required": [
+          "wallet"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "verify_lead",
+      "description": "Verify a NL/BE sales lead against the registers in one call: real and active, VAT, mail server, IBAN, sanctions; a 0-100 lead score. $0.27.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "description": "NL (KVK) or BE (KBO)"
+          },
+          "company_number": {
+            "type": "string",
+            "description": "8-digit KVK number or 10-digit KBO/CBE number"
+          },
+          "name": {
+            "type": "string",
+            "description": "Company name as the lead gave it (NL without a number)"
+          },
+          "vat_number": {
+            "type": "string",
+            "description": "EU VAT number, checked with VIES"
+          },
+          "email": {
+            "type": "string",
+            "description": "Contact email; only its domain is checked"
+          },
+          "domain": {
+            "type": "string",
+            "description": "Company website domain"
+          },
+          "address": {
+            "type": "object",
+            "description": "{street, house_number, postcode, city} the lead gave"
+          },
+          "iban": {
+            "type": "string",
+            "description": "IBAN the lead gave; only country, bank, BIC and last 4 are returned"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number the lead gave; compared with the numbers the company publishes, never echoed. Rejected until website phone lookup is switched on"
+          },
+          "target_industries": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 100
+            },
+            "maxItems": 20,
+            "description": "Ideal-customer industries: SBI/NACE code prefixes (\"62\") or whole words; information only"
+          },
+          "target_size": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "max": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false,
+            "description": "Ideal-customer employee range {min, max}, both inclusive; information only"
+          }
+        },
+        "required": [
+          "country"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true
+      }
+    }
+  ]
+}
