@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# Most pull requests here come from limitguard-ai's public-repo-sync workflow (branch
+# sync/limitguard-ai, author limitguard-sync[bot]). They are rendered, not hand-written,
+# and are still reviewed: this repo is what MCP registries and users install.
+language: en-US
+tone_instructions: "Plain English, short. Only flag what a user or an MCP registry would notice: wrong behaviour, a broken install, a leaked secret or internal detail."
+reviews:
+  profile: chill
+  high_level_summary: true
+  poem: false
+  review_status: true
+  auto_review:
+    enabled: true
+    drafts: false
+  path_instructions:
+    - path: "server.json"
+      instructions: "MCP registry manifest. Check the version matches CHANGELOG.md and that remotes and URLs are https and point at limitguard.ai."
+    - path: "smithery.yaml"
+      instructions: "Smithery listing. Check it is valid YAML and that the install command and description agree with README.md."
+    - path: "glama.json"
+      instructions: "Glama listing. Check it is valid JSON and that no field was emptied."
+    - path: "README.md"
+      instructions: "Public listing text. Flag prices, tool names or limits that contradict server.json, CHANGELOG.md or llms-install.md, and any internal name, hostname, issue number or email address that should not be public."
+    - path: "llms-install.md"
+      instructions: "Install guide read by AI agents. Check the steps are complete and the config block is valid JSON."
+    - path: "scripts/**"
+      instructions: "Check no credential is read from argv or printed, and that errors fail closed."
+  tools:
+    gitleaks:
+      enabled: true
+    ruff:
+      enabled: true
+    markdownlint:
+      enabled: true
+    yamllint:
+      enabled: true
+    actionlint:
+      enabled: true
+    osvScanner:
+      enabled: true
+chat:
+  auto_reply: true
