@@ -2,7 +2,7 @@ name: Release
 
 # server.json's `version` is what MCP directories index, and CHANGELOG.md explains each
 # one. Neither is worth anything without a tag to point at, and the version is bumped by
-# a generator in jwconsultancyteam/limitguard-ai -- so tagging it by hand is a step that
+# a generator in the service's own repository -- so tagging it by hand is a step that
 # gets skipped. This does it on the merge that carries the version, and releases only
 # when that version has no tag yet -- so the merges that touch these files without
 # bumping, and a re-run over the same commit, both do nothing.
@@ -35,6 +35,14 @@ concurrency:
   group: release
   cancel-in-progress: false
 
+env:
+  # mcp-publisher is the registry's own CLI, released from the registry's repo.
+  # linux_arm64 build for the self-hosted (ARM64) pool. Checksum from the release's
+  # own registry_1.8.1_checksums.txt, verified independently by downloading and
+  # hashing the artifact (2026-09-15).
+  MCP_PUBLISHER_VERSION: '1.8.1'
+  MCP_PUBLISHER_SHA256: '8dd75a6cf6845688b5d4e46df58d3ca26d5c8d233bb0626606e1db82c5e883e4'
+
 jobs:
   tag:
     # Push events are already filtered to main above; this guard closes the
@@ -44,10 +52,9 @@ jobs:
     if: github.ref == 'refs/heads/main'
     # One checkout, a changelog awk, one gh release: minutes, not tens.
     timeout-minutes: 10
-    # GitHub-hosted billing is dead for this org; every job that can move to the
-    # org's shared self-hosted pool has (limitguard-ai #410/#411, walker-brain,
-    # silou, archon-walker). No Docker, no required-check role -- safe to move.
-    runs-on: self-hosted
+    # Runs on the org's self-hosted pool. ARM64 because it validates server.json with
+    # the same linux_arm64 mcp-publisher build as `publish` before it releases.
+    runs-on: [self-hosted, ARM64]
     outputs:
       # Read before the tagged/untagged fork, so `publish` sees it on every run --
       # including the already-tagged one, which is the registry catch-up path.
@@ -100,6 +107,19 @@ jobs:
             exit 1
           fi
 
+      # A tag and a GitHub release cannot be taken back cleanly, and a corrected commit
+      # with the same version would skip this job because the tag exists. So the listing
+      # must pass the registry's own schema check before anything is tagged.
+      - name: Validate server.json before tagging
+        if: steps.listing.outputs.tagged == 'false'
+        run: |
+          set -euo pipefail
+          curl -sSfL -o "${RUNNER_TEMP}/mcp-publisher.tar.gz" \
+            "https://github.com/modelcontextprotocol/registry/releases/download/v${MCP_PUBLISHER_VERSION}/mcp-publisher_linux_arm64.tar.gz"
+          echo "${MCP_PUBLISHER_SHA256}  ${RUNNER_TEMP}/mcp-publisher.tar.gz" | sha256sum -c -
+          tar xzf "${RUNNER_TEMP}/mcp-publisher.tar.gz" -C "${RUNNER_TEMP}" mcp-publisher
+          "${RUNNER_TEMP}/mcp-publisher" validate server.json
+
       - name: Release
         if: steps.listing.outputs.tagged == 'false'
         env:
@@ -137,12 +157,6 @@ jobs:
     env:
       VERSION: ${{ needs.tag.outputs.version }}
       REGISTRY_URL: https://registry.modelcontextprotocol.io
-      # mcp-publisher is the registry's own CLI, released from the registry's repo.
-      # linux_arm64 build for the self-hosted (ARM64) pool. Checksum from the release's
-      # own registry_1.8.1_checksums.txt, verified independently by downloading and
-      # hashing the artifact (2026-09-15).
-      MCP_PUBLISHER_VERSION: '1.8.1'
-      MCP_PUBLISHER_SHA256: '8dd75a6cf6845688b5d4e46df58d3ca26d5c8d233bb0626606e1db82c5e883e4'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
@@ -179,9 +193,8 @@ jobs:
         if: steps.registry.outputs.published == 'false'
         env:
           # The private half of the Ed25519 key whose public half api.limitguard.ai serves
-          # at /.well-known/mcp-registry-auth (limitguard-ai app/routers/discovery.py).
-          # Rotated 2026-09-08 (limitguard-ai#178); the same key lives in ~/.config/limitguard
-          # on Walker's Mac. Never regenerate it here: a new key would not match the served
+          # at /.well-known/mcp-registry-auth. Rotated 2026-09-08. Never regenerate it
+          # here: a new key would not match the served
           # proof, and the namespace ai.limitguard.api/* is only publishable under it.
           PRIVATE_KEY: ${{ secrets.MCP_REGISTRY_PRIVATE_KEY_HEX }}
         run: |
@@ -255,7 +268,7 @@ jobs:
       # after parsing and signing, before any byte leaves the machine). The
       # flag value is on the child's command line only for the sub-second
       # process startup window. See the script's docstring for the full
-      # mechanics and why it fails open.
+      # mechanics. If the key cannot be hidden, the login is refused.
       - name: Log in to the registry with the domain key
         if: steps.registry.outputs.published == 'false'
         env:
