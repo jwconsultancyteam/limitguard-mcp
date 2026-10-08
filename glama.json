@@ -53,7 +53,7 @@
     {
       "name": "check_entity",
       "title": "Check entity trust",
-      "description": "Full trust intelligence check on a business entity. Returns trust score (0-100), risk level, and recommendation.",
+      "description": "Company check on a business: sanctions screening and country risk, the Dutch KVK register for an NL company, and the website domain when you send it. Returns trust_score (0-100, 100 = best), trust_level (high means low risk), cluster, recommendation, confidence, top_factors and sources_checked.",
       "inputs": [
         "entity_name (required)",
         "country (required)",
@@ -89,7 +89,7 @@
     {
       "name": "get_risk_score",
       "title": "Get risk score",
-      "description": "Quick risk assessment without full trust check. Focuses on risk signals only.",
+      "description": "Quick risk score from sanctions screening and country risk only, without the register or domain lookups of check_entity. Returns risk_score (0-100, 100 = riskiest), risk_level (high means high risk, the reverse of check_entity's trust_level), sanctions_match and fatf_status; no recommendation or factors.",
       "inputs": [
         "entity_name (required)",
         "country (required)"

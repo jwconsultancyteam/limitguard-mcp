@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "Limitguard Lead Verification",
   "description": "Lead validation over MCP: KVK/KBO register, EU VAT, sanctions and email checks with sources.",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "websiteUrl": "https://limitguard.ai",
   "icons": [
     {
@@ -52,7 +52,7 @@
   "tools": [
     {
       "name": "check_entity",
-      "description": "Company check on a business: sanctions screening and country risk, the Dutch KVK register for an NL company, and the website domain when you send it. Returns a 0-100 score, a risk level and a recommendation.",
+      "description": "Company check on a business: sanctions screening and country risk, the Dutch KVK register for an NL company, and the website domain when you send it. Returns trust_score (0-100, 100 = best), trust_level (high means low risk), cluster, recommendation, confidence, top_factors and sources_checked.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -135,7 +135,7 @@
     },
     {
       "name": "get_risk_score",
-      "description": "Quick risk score from sanctions screening and country risk only, without the register or domain lookups of check_entity.",
+      "description": "Quick risk score from sanctions screening and country risk only, without the register or domain lookups of check_entity. Returns risk_score (0-100, 100 = riskiest), risk_level (high means high risk, the reverse of check_entity's trust_level), sanctions_match and fatf_status; no recommendation or factors.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -180,7 +180,7 @@
           },
           "cbe_number": {
             "type": "string",
-            "description": "Optional Belgian CBE number (0XXX.XXX.XXX)"
+            "description": "Optional Belgian CBE number (0XXX.XXX.XXX or 10 digits)"
           },
           "vat_number": {
             "type": "string",

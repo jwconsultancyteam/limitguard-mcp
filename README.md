@@ -13,7 +13,7 @@ Lead validation over the [Model Context Protocol](https://modelcontextprotocol.i
 
 **What it is:** Limitguard is a lead validation service for lead generation agencies, B2B marketing and sales teams: it checks the company behind each lead against official business registers (full coverage in the Netherlands and Belgium), EU VAT and sanctions lists, with website age in the company check, and returns proceed, review or block with the source on every line. Developers and AI agents can use its HTTP API, MCP server and A2A service, hosted in the EU.
 
-**Start here:** Free sandbox key, no wallet. The sandbox covers entity, risk and KYB checks; Lead Verify and the agent check need a live key or an x402 payment. Lead Verify $0.27 per lead and agent check $0.75 per wallet; $0.11-1.85 per call; entity and risk checks $0.88-1.05 fresh ($1.50 KYB), $0.11 cached ($0.25 KYB) when available.
+**Start here:** On MCP a paid tool takes an x402 payment per call, or debits prepaid credit (a paid key, or a funded workspace); verify_wallet, sanctions_preview and get_trust_score are free; the free sandbox key returns mock data on the REST API only, not on MCP. Lead Verify $0.27 per lead and agent check $0.75 per wallet; $0.11-1.85 per call; entity and risk checks $0.88-1.05 fresh ($1.50 KYB), $0.11 cached ($0.25 KYB) when available.
 
 ## Tools
 
@@ -22,10 +22,10 @@ the names it returns, and the names `tools/call` accepts:
 
 | Tool | Description | Inputs |
 |------|-------------|--------|
-| `check_entity` | Company check on a business: sanctions screening and country risk, the Dutch KVK register for an NL company, and the website domain when you send it. Returns a 0-100 score, a risk level and a recommendation. | `entity_name` (required), `country` (required), `kvk_number`, `domain` |
+| `check_entity` | Company check on a business: sanctions screening and country risk, the Dutch KVK register for an NL company, and the website domain when you send it. Returns trust_score (0-100, 100 = best), trust_level (high means low risk), cluster, recommendation, confidence, top_factors and sources_checked. | `entity_name` (required), `country` (required), `kvk_number`, `domain` |
 | `get_trust_score` | Look up your own most recent trust score for an entity you checked before, from your stored checks: score, level, when, which product, trend and how many checks are on record. Runs no new check and calls no data source. Free ($0). | `entity_id` (required) |
 | `verify_wallet` | Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. Free ($0). Supports EVM and Solana addresses. | `wallet_address` (required), `chain_id` |
-| `get_risk_score` | Quick risk score from sanctions screening and country risk only, without the register or domain lookups of check_entity. | `entity_name` (required), `country` (required) |
+| `get_risk_score` | Quick risk score from sanctions screening and country risk only, without the register or domain lookups of check_entity. Returns risk_score (0-100, 100 = riskiest), risk_level (high means high risk, the reverse of check_entity's trust_level), sanctions_match and fatf_status; no recommendation or factors. | `entity_name` (required), `country` (required) |
 | `get_compliance_report` | Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, every finding as a ranked action, a per-source status table (ok / unavailable / error) and a report hash. | `entity_name`, `country`, `kvk_number`, `cbe_number`, `vat_number`, `domain`, `iban`, `wallet_address`, `wallet_chain`, `check_id` |
 | `sanctions_preview` | Free yes/no sanctions preview against the local OFAC SDN, EU and UN lists. Returns possible_match, lists_checked and list_dates only, never an entry. 10 per caller per UTC day. | `name` (required), `country` |
 | `sanctions_screen` | Sanctions screen against the local OFAC SDN, EU and UN lists: matched entries with list, entry id, programmes, countries, listing date and match score. A name match is not a determination. | `name` (required), `country` |
@@ -105,15 +105,15 @@ but they act on an API key you already hold; see [API keys and prepaid balance](
 | `/v1/sanctions/screen` | POST | $0.11 | Sanctions screen of a company or person name against the OFAC SDN, EU and UN sanctions lists, held locally and refreshed daily. Returns each matched entry: list, entry id, matched name, programmes, countries, listing date and match score. Exact normalised or word-order-insensitive name match only; a name match is not a determination. |
 | `/v1/entity/check` | POST | $1.05 | Full entity trust check across multiple verification layers: KVK/CBE registry, OpenSanctions, country risk (CPI/FATF), domain WHOIS, IBAN validation and EU VAT/VIES. Returns trust score 0-100 with cluster and recommendation. |
 | `/v1/risk/score` | POST | $0.90 | Quick risk score (0-100) for entity name + country. Lightweight check without full data source scan. |
-| `/v1/entity/deep-check` | POST | $0.88 | Extended screening in up to three tiers. fresh ($0.88): politically exposed person and relative/close-associate (role.pep / role.rca) matches from OpenSanctions, with the match detail the standard entity check does not return, plus a Dutch Centraal Insolventieregister screen (NL only). enhanced ($1.71): the same plus adverse media screening against a global news index. If a source of the requested tier cannot be reached the call returns 503 and is not charged. |
-| `/v1/reports/entity` | POST | $1.85 | Per-entity report built from one real check's signals: identity, sanctions and PEP screening, domain signals, risk score, correlations with the caller's earlier reports, sources and an evidence hash. A source that did not answer is shown unavailable, never clean. |
+| `/v1/entity/deep-check` | POST | $0.88 | Extended screening in two tiers. fresh ($0.88): politically exposed person and relative/close-associate (role.pep / role.rca) matches from OpenSanctions, with the match detail the standard entity check does not return, plus a Dutch Centraal Insolventieregister screen (NL only). enhanced ($1.71): the same plus adverse media screening against a global news index. If a source of the requested tier cannot be reached the call returns 503 and is not charged. |
+| `/v1/reports/entity` | POST | $1.85 | Per-entity report built from one real check's signals: identity, sanctions and PEP screening, domain signals, trust score (risk.trust_score, 0-100, 100 = best), correlations with the caller's earlier reports, sources and an evidence hash. A source that did not answer is shown unavailable, never clean. |
 
 ### Reputation management
 
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
-| `/v1/reputation/score` | POST | $0.90 | Reputation scoring with Bayesian trust decay analysis. Tracks entity trust over time with confidence intervals. |
-| `/v1/reputation/history/{id}` | GET | $0.11 | Historical reputation trend data. Returns trust score timeline with change events and decay curves. |
+| `/v1/reputation/score` | POST | $0.90 | Reputation scoring with linear trust decay: after its first week a score loses 2-5 points a week by risk cluster (none for a sanctions-flagged entity), plus a bonus of up to 5 points for repeat verifications. |
+| `/v1/reputation/history/{id}` | GET | $0.11 | Historical reputation trend data. Returns the trust score timeline with the decay applied at each point and an overall trend. |
 
 ### Wallet services
 
@@ -126,7 +126,7 @@ but they act on an API key you already hold; see [API keys and prepaid balance](
 | Endpoint | Method | Price | Description |
 |----------|--------|-------|-------------|
 | `/v1/kyb/check` | POST | $1.50 | Know Your Business verification: company registration, sanctions screening, VAT/VIES, and domain analysis in one call. |
-| `/v1/compliance/alerts` | GET | $0.11 | Daily changes to the OFAC, EU and UN sanctions lists, plus alerts when an entity or wallet this key checked is listed. Poll this route; alerts are not pushed. Filter by jurisdiction and severity. |
+| `/v1/compliance/alerts` | GET | $0.11 | Daily changes to the OFAC, EU and UN sanctions lists, plus alerts when an entity or wallet this key checked is listed. Poll this route; alerts about entities or wallets this key checked are also sent to a webhook registered for sanctions.match.new (POST /v1/webhooks). Filter by jurisdiction and severity. |
 | `/v1/compliance/readiness/{id}` | GET | $0.11 | EU AI Act readiness self-assessment for one AI system. Send the system_type and the checklist items you have completed (completed_items); returns the EU AI Act risk level for that system type, a readiness score and the open gaps. entity_id is your label: nothing is looked up about it. |
 
 ### MCP tool paths (direct HTTP)

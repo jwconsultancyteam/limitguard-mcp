@@ -1,10 +1,10 @@
 # Limitguard MCP server: installation
 
-Free sandbox key, no wallet. The sandbox covers entity, risk and KYB checks; Lead Verify and the agent check need a live key or an x402 payment. Lead Verify $0.27 per lead and agent check $0.75 per wallet; $0.11-1.85 per call; entity and risk checks $0.88-1.05 fresh ($1.50 KYB), $0.11 cached ($0.25 KYB) when available.
+On MCP a paid tool takes an x402 payment per call, or debits prepaid credit (a paid key, or a funded workspace); verify_wallet, sanctions_preview and get_trust_score are free; the free sandbox key returns mock data on the REST API only, not on MCP. Lead Verify $0.27 per lead and agent check $0.75 per wallet; $0.11-1.85 per call; entity and risk checks $0.88-1.05 fresh ($1.50 KYB), $0.11 cached ($0.25 KYB) when available.
 
 No server process, no npm or Python package: this is a remote Streamable HTTP server.
 
-## 1. Get a free key
+## 1. Get a key
 
 ```bash
 curl -X POST https://api.limitguard.ai/v1/keys/create \
@@ -12,7 +12,9 @@ curl -X POST https://api.limitguard.ai/v1/keys/create \
   -d '{"email":"you@example.com"}'
 ```
 
-The response carries a key starting with `lg_live_`.
+The response carries a key starting with `lg_live_`. The key alone calls only the
+free tools; a paid tool asks for an x402 payment unless the key's workspace has
+prepaid credit.
 
 ## 2. Add the server to cline_mcp_settings.json
 
@@ -41,10 +43,10 @@ without it the call is refused with a message saying how to get a key.
 
 ## Tools
 
-- `check_entity`: Company check on a business: sanctions screening and country risk, the Dutch KVK register for an NL company, and the website domain when you send it. Returns a 0-100 score, a risk level and a recommendation.
+- `check_entity`: Company check on a business: sanctions screening and country risk, the Dutch KVK register for an NL company, and the website domain when you send it. Returns trust_score (0-100, 100 = best), trust_level (high means low risk), cluster, recommendation, confidence, top_factors and sources_checked.
 - `get_trust_score`: Look up your own most recent trust score for an entity you checked before, from your stored checks: score, level, when, which product, trend and how many checks are on record. Runs no new check and calls no data source. Free ($0).
 - `verify_wallet`: Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. Free ($0). Supports EVM and Solana addresses.
-- `get_risk_score`: Quick risk score from sanctions screening and country risk only, without the register or domain lookups of check_entity.
+- `get_risk_score`: Quick risk score from sanctions screening and country risk only, without the register or domain lookups of check_entity. Returns risk_score (0-100, 100 = riskiest), risk_level (high means high risk, the reverse of check_entity's trust_level), sanctions_match and fatf_status; no recommendation or factors.
 - `get_compliance_report`: Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, every finding as a ranked action, a per-source status table (ok / unavailable / error) and a report hash.
 - `sanctions_preview`: Free yes/no sanctions preview against the local OFAC SDN, EU and UN lists. Returns possible_match, lists_checked and list_dates only, never an entry. 10 per caller per UTC day.
 - `sanctions_screen`: Sanctions screen against the local OFAC SDN, EU and UN lists: matched entries with list, entry id, programmes, countries, listing date and match score. A name match is not a determination.
