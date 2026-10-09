@@ -16,6 +16,12 @@ The response carries a key starting with `lg_live_`. The key alone calls only th
 free tools; a paid tool asks for an x402 payment unless the key's workspace has
 prepaid credit.
 
+A sandbox key (`"tier": "sandbox"`, starting with `lg_sandbox_`) is for the REST
+API, not this server: the REST mirrors of the tools accept it and return mock data.
+The sandbox covers entity, risk and KYB checks; Lead Verify and the agent check need a live key or an x402 payment.
+On the MCP transport a sandbox key does not lift payment: a paid tool still asks
+for an x402 payment.
+
 ## 2. Add the server to cline_mcp_settings.json
 
 Replace `YOUR_LIMITGUARD_KEY` with that key; keep the `Bearer ` prefix.
