@@ -248,7 +248,7 @@ which is the one to read when the two disagree. Reconciling them is the service'
 
 ## Links
 
-- **Website:** [limitguard.ai](https://limitguard.ai)
+- **Website:** [limitguard.ai](https://limitguard.ai/?utm_source=mcp_readme&utm_medium=package&utm_campaign=home&utm_content=links)
 - **Status:** [status.limitguard.ai](https://status.limitguard.ai)
 - **MCP Registry:** [ai.limitguard.api/trust-intelligence](https://registry.modelcontextprotocol.io/v0/servers/ai.limitguard.api%2Ftrust-intelligence/versions/latest) (JSON; the registry has no HTML page per server)
 

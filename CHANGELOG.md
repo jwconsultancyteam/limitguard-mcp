@@ -25,6 +25,11 @@ which renders this repository from that service's
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [2.8.3] - 2026-10-09
+
+### Changed
+- Published tool table and prices refreshed.
+
 ## [2.8.2] - 2026-10-09
 
 ### Changed
