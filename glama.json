@@ -77,7 +77,7 @@
     {
       "name": "verify_wallet",
       "title": "Screen wallet",
-      "description": "Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. Free ($0). Supports EVM and Solana addresses.",
+      "description": "Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. $0.11. Supports EVM and Solana addresses.",
       "inputs": [
         "wallet_address (required)",
         "chain_id"

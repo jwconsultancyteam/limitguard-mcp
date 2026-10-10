@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "Limitguard Lead Verification",
   "description": "Lead validation over MCP: KVK/KBO register, EU VAT, sanctions and email checks with sources.",
-  "version": "2.8.3",
+  "version": "2.9.0",
   "websiteUrl": "https://limitguard.ai",
   "icons": [
     {
@@ -109,7 +109,7 @@
     },
     {
       "name": "verify_wallet",
-      "description": "Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. Free ($0). Supports EVM and Solana addresses.",
+      "description": "Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. $0.11. Supports EVM and Solana addresses.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -129,7 +129,7 @@
       "annotations": {
         "readOnlyHint": true,
         "destructiveHint": false,
-        "idempotentHint": true,
+        "idempotentHint": false,
         "openWorldHint": true
       }
     },
@@ -239,6 +239,32 @@
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
+        "openWorldHint": true
+      }
+    },
+    {
+      "name": "wallet_sanctions_preview",
+      "description": "Free yes/no check of a wallet address against the OFAC SDN list: sanctioned, lists, the list date and its freshness, no programmes or entry ids. 10 per caller per UTC day, separate from sanctions_preview. The full wallet screen is verify_wallet ($0.11).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "wallet_address": {
+            "type": "string",
+            "description": "Blockchain wallet address"
+          },
+          "chain_id": {
+            "type": "string",
+            "description": "CAIP-2 chain ID (default: eip155:8453 for Base); base, eth, solana, btc also accepted"
+          }
+        },
+        "required": [
+          "wallet_address"
+        ]
+      },
+      "annotations": {
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "idempotentHint": false,
         "openWorldHint": true
       }
     },
