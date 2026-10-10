@@ -25,6 +25,17 @@ which renders this repository from that service's
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [2.9.0] - 2026-10-10
+
+### Added
+- Tool `wallet_sanctions_preview` added.
+
+### Changed
+- Tool `verify_wallet` description updated.
+- Tool `verify_wallet` annotations corrected.
+- `llms-install.md` regenerated.
+- `glama.json` tool descriptions refreshed.
+
 ## [2.8.3] - 2026-10-09
 
 ### Changed

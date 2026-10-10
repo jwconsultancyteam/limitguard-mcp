@@ -13,7 +13,7 @@ Lead validation over the [Model Context Protocol](https://modelcontextprotocol.i
 
 **What it is:** Limitguard is a lead validation service for lead generation agencies, B2B marketing and sales teams: it checks the company behind each lead against official business registers (full coverage in the Netherlands and Belgium), EU VAT and sanctions lists, with website age in the company check, and returns proceed, review or block with the source on every line. Developers and AI agents can use its HTTP API, MCP server and A2A service, hosted in the EU.
 
-**Start here:** On MCP a paid tool takes an x402 payment per call, or debits prepaid credit (a paid key, or a funded workspace); verify_wallet, sanctions_preview and get_trust_score are free; the free sandbox key returns mock data on the REST API only, not on MCP. Lead Verify $0.27 per lead and agent check $0.75 per wallet; $0.11-1.85 per call; entity and risk checks $0.88-1.05 fresh ($1.50 KYB), $0.11 cached ($0.25 KYB) when available.
+**Start here:** On MCP a paid tool takes an x402 payment per call, or debits prepaid credit (a paid key, or a funded workspace); wallet_sanctions_preview, sanctions_preview and get_trust_score are free; the free sandbox key returns mock data on the REST API only, not on MCP. Lead Verify $0.27 per lead and agent check $0.75 per wallet; $0.11-1.85 per call; entity and risk checks $0.88-1.05 fresh ($1.50 KYB), $0.11 cached ($0.25 KYB) when available.
 
 ## Tools
 
@@ -24,10 +24,11 @@ the names it returns, and the names `tools/call` accepts:
 |------|-------------|--------|
 | `check_entity` | Company check on a business: sanctions screening and country risk, the Dutch KVK register for an NL company, and the website domain when you send it. Returns trust_score (0-100, 100 = best), trust_level (high means low risk), cluster, recommendation, confidence, top_factors and sources_checked. | `entity_name` (required), `country` (required), `kvk_number`, `domain` |
 | `get_trust_score` | Look up your own most recent trust score for an entity you checked before, from your stored checks: score, level, when, which product, trend and how many checks are on record. Runs no new check and calls no data source. Free ($0). | `entity_id` (required) |
-| `verify_wallet` | Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. Free ($0). Supports EVM and Solana addresses. | `wallet_address` (required), `chain_id` |
+| `verify_wallet` | Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. $0.11. Supports EVM and Solana addresses. | `wallet_address` (required), `chain_id` |
 | `get_risk_score` | Quick risk score from sanctions screening and country risk only, without the register or domain lookups of check_entity. Returns risk_score (0-100, 100 = riskiest), risk_level (high means high risk, the reverse of check_entity's trust_level), sanctions_match and fatf_status; no recommendation or factors. | `entity_name` (required), `country` (required) |
 | `get_compliance_report` | Per-entity report built from one real check: registry identity, sanctions and PEP screens, domain signals, risk score with the rules that fired, correlations, every finding as a ranked action, a per-source status table (ok / unavailable / error) and a report hash. | `entity_name`, `country`, `kvk_number`, `cbe_number`, `vat_number`, `domain`, `iban`, `wallet_address`, `wallet_chain`, `check_id` |
 | `sanctions_preview` | Free yes/no sanctions preview against the local OFAC SDN, EU and UN lists. Returns possible_match, lists_checked and list_dates only, never an entry. 10 per caller per UTC day. | `name` (required), `country` |
+| `wallet_sanctions_preview` | Free yes/no check of a wallet address against the OFAC SDN list: sanctioned, lists, the list date and its freshness, no programmes or entry ids. 10 per caller per UTC day, separate from sanctions_preview. The full wallet screen is verify_wallet ($0.11). | `wallet_address` (required), `chain_id` |
 | `sanctions_screen` | Sanctions screen against the local OFAC SDN, EU and UN lists: matched entries with list, entry id, programmes, countries, listing date and match score. A name match is not a determination. | `name` (required), `country` |
 | `check_agent_wallet` | Check a counterparty agent's EVM wallet in one call: OFAC SDN digital-currency address list match, Base USDC and ETH balance, ERC-8004 identity registration (and, given an agent id, that agent's owner and payment wallet) and open ERC-8004 feedback, which is not scored. $0.75. | `wallet` (required), `agent_id`, `domain` |
 | `verify_lead` | Verify a NL/BE sales lead against the registers in one call: real and active, VAT, mail server, IBAN, sanctions; a 0-100 lead score. $0.27. | `country` (required), `company_number`, `name`, `vat_number`, `email`, `domain`, `address`, `iban`, `phone`, `target_industries`, `target_size` |
@@ -45,7 +46,7 @@ in [Full x402 API](#full-x402-api-direct-http).
 | Risk Score (`/v1/mcp/risk-score`) | $0.90 |
 | Check Agent (`/v1/mcp/check-agent`) | $0.00: hidden placeholder, not in `tools/list`; returns placeholder data |
 | Trust Score (`/v1/mcp/trust-score`) | $0.00, free (your own stored score) |
-| Verify Wallet (`/v1/mcp/verify-wallet`) | $0.00, free (real wallet screening) |
+| Verify Wallet (`/v1/mcp/verify-wallet`) | $0.11, free (real wallet screening) |
 
 ## Authentication
 
@@ -141,7 +142,7 @@ REST endpoints above directly.
 | `/v1/mcp/check-entity` | POST | $1.05 | `check_entity` |
 | `/v1/mcp/check-agent` | POST | $0.00 | `check_agent` |
 | `/v1/mcp/trust-score` | POST | $0.00 | `get_trust_score` |
-| `/v1/mcp/verify-wallet` | POST | $0.00 | `verify_wallet` |
+| `/v1/mcp/verify-wallet` | POST | $0.11 | `verify_wallet` |
 | `/v1/mcp/risk-score` | POST | $0.90 | `get_risk_score` |
 
 ### API keys and prepaid balance
