@@ -65,6 +65,10 @@ def _message(parts: list, *, task_id: str | None = None, metadata: dict | None =
 
 async def _send(http: httpx.AsyncClient, body: dict) -> dict:
     resp = await http.post("/a2a", json=body, headers={"X-A2A-Extensions": EXTENSION_URI})
+    if resp.status_code == 429:
+        # Calls without a key are rate limited per IP; nothing was charged.
+        wait = resp.headers.get("Retry-After", "60")
+        raise SystemExit(f"Rate limited (HTTP 429): wait {wait} seconds and run it again. Nothing was charged.")
     resp.raise_for_status()
     answer = resp.json()
     if "error" in answer:

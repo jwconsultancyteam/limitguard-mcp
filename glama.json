@@ -82,9 +82,8 @@
         "wallet_address (required)",
         "chain_id"
       ],
-      "price_usdc": 0.0,
-      "status": "live",
-      "pricing_note": "Free: real wallet screening."
+      "price_usdc": 0.11,
+      "status": "live"
     },
     {
       "name": "get_risk_score",
@@ -119,7 +118,7 @@
     {
       "name": "sanctions_preview",
       "title": "Sanctions preview",
-      "description": "Free yes/no sanctions preview against the local OFAC SDN, EU and UN lists. Returns possible_match, lists_checked and list_dates only, never an entry. 10 per caller per UTC day.",
+      "description": "Free yes/no sanctions preview against the local OFAC SDN, EU and UN lists. Returns possible_match, lists_checked, list_dates and list_note only, never an entry. 10 per caller per UTC day.",
       "inputs": [
         "name (required)",
         "country"

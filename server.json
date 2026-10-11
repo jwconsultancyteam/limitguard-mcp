@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/trust-intelligence",
   "title": "Limitguard Lead Verification",
   "description": "Lead validation over MCP: KVK/KBO register, EU VAT, sanctions and email checks with sources.",
-  "version": "2.9.1",
+  "version": "2.10.0",
   "websiteUrl": "https://limitguard.ai",
   "icons": [
     {
@@ -218,7 +218,7 @@
     },
     {
       "name": "sanctions_preview",
-      "description": "Free yes/no sanctions preview against the local OFAC SDN, EU and UN lists. Returns possible_match, lists_checked and list_dates only, never an entry. 10 per caller per UTC day.",
+      "description": "Free yes/no sanctions preview against the local OFAC SDN, EU and UN lists. Returns possible_match, lists_checked, list_dates and list_note only, never an entry. 10 per caller per UTC day.",
       "inputSchema": {
         "type": "object",
         "properties": {
