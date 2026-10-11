@@ -308,6 +308,41 @@ jobs:
           done
           echo "Published ${NAME} ${VERSION} to the MCP Registry: ${REGISTRY_URL}/v0.1/servers/${ENCODED}/versions/latest" >> "$GITHUB_STEP_SUMMARY"
 
+      # 2.11.0 renamed the listing from ai.limitguard.api/trust-intelligence (an old
+      # product name; registry names cannot be edited). Mark every version of the old
+      # name deprecated, with a pointer, once the new name is live. Idempotent: an old
+      # name already deprecated, or gone, is left alone.
+      - name: Retire the old registry name
+        if: steps.registry.outputs.published == 'false'
+        env:
+          OLD_NAME: ai.limitguard.api/trust-intelligence
+          NEW_NAME: ${{ steps.registry.outputs.name }}
+        run: |
+          set -euo pipefail
+          if [ "${NEW_NAME}" = "${OLD_NAME}" ]; then
+            echo "Listing still uses ${OLD_NAME}; nothing to retire."
+            exit 0
+          fi
+          encoded_old="$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "${OLD_NAME}")"
+          status="$(curl -sS --max-time 30 --retry 3 --retry-delay 5 \
+            "${REGISTRY_URL}/v0.1/servers/${encoded_old}/versions/latest" \
+            | python3 -c 'import json, sys
+          try:
+              d = json.load(sys.stdin)
+          except ValueError:
+              print("absent"); raise SystemExit
+          meta = (d.get("_meta") or {}).get("io.modelcontextprotocol.registry/official") or {}
+          print(meta.get("status") or "unknown")')"
+          echo "Old name ${OLD_NAME}: status ${status}"
+          case "${status}" in
+            deprecated|deleted|absent) exit 0 ;;
+          esac
+          HOME="${RUNNER_TEMP}/mcp-publisher-home" "${RUNNER_TEMP}/mcp-publisher" status \
+            --status deprecated --all-versions --yes \
+            --message "Renamed: use ${NEW_NAME} (same server, same tools)." \
+            "${OLD_NAME}"
+          echo "Deprecated every version of ${OLD_NAME}, pointing to ${NEW_NAME}." >> "$GITHUB_STEP_SUMMARY"
+
       # The runner wipes RUNNER_TEMP between jobs; this is defence in depth so the login
       # token never outlives the job even if that changes.
       - name: Remove the login token and the downloaded CLI
