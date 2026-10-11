@@ -11,3 +11,11 @@ Thumbs.db
 # Environment
 .env
 .env.local
+
+# Python
+__pycache__/
+*.egg-info/
+.venv/
+dist/
+build/
+.pytest_cache/
