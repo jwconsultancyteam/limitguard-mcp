@@ -5,7 +5,7 @@
 
 # Limitguard MCP Server
 
-Lead validation over the [Model Context Protocol](https://modelcontextprotocol.io/): check the company behind each lead against the KVK (Netherlands) or KBO (Belgium) register, EU VAT (VIES), sanctions lists and its email domain, in one tool call. Company, sanctions and wallet checks for developers and AI agents sit beside it.
+Check Dutch and Belgian companies, sales leads and crypto wallets before you deal with them, over the [Model Context Protocol](https://modelcontextprotocol.io/): the KVK (Netherlands) and KBO (Belgium) registers, EU VAT (VIES), the OFAC, EU and UN sanctions lists and wallet risk on Base and Solana, with the source and date of every answer.
 
 **Server URL:** `https://api.limitguard.ai/mcp`
 **Transport:** Streamable HTTP (POST)
@@ -14,6 +14,18 @@ Lead validation over the [Model Context Protocol](https://modelcontextprotocol.i
 **What it is:** Limitguard is a lead validation service for lead generation agencies, B2B marketing and sales teams: it checks the company behind each lead against official business registers (full coverage in the Netherlands and Belgium), EU VAT and sanctions lists, with website age in the company check, and returns proceed, review or block with the source on every line. Developers and AI agents can use its HTTP API, MCP server and A2A service, hosted in the EU.
 
 **Start here:** On MCP a paid tool takes an x402 payment per call, or debits prepaid credit (a paid key, or a funded workspace); wallet_sanctions_preview, sanctions_preview and get_trust_score are free; the free sandbox key returns mock data on the REST API only, not on MCP. Lead Verify $0.27 per lead and agent check $0.75 per wallet; $0.11-1.85 per call; entity and risk checks $0.88-1.05 fresh ($1.50 KYB), $0.11 cached ($0.25 KYB) when available.
+
+## Features
+
+- **Lead verify** for Dutch and Belgian sales leads: is it a real, active company? A verdict, a 0-100 lead score and one action per flag ($0.27).
+- **Company check** against the KVK and KBO registers, EU VAT (VIES), the domain and the IBAN, with a 0-100 score and a recommendation.
+- **Sanctions screen** of company and person names against the OFAC, EU and UN lists, with a free yes/no preview.
+- **Crypto wallet screen** on Base and Solana: OFAC address match, balances, wallet age, recent activity and risk rules with advice ($0.11).
+- **Free wallet sanctions check**: a yes/no against the OFAC list.
+- **AI agent wallet check** before your agent pays: sanctions, balance, ERC-8004 identity and public reputation ($0.75).
+- **Pay per call** in USDC on Base or Solana with x402, or with an API key and prepaid credit. A check that fails is not charged.
+- **MCP, REST and A2A**, and agents can pay inside A2A with x402.
+- **Sources on every answer**, with the date each one was read. Hosted in the EU.
 
 ## Tools
 
@@ -246,6 +258,23 @@ which is the one to read when the two disagree. Reconciling them is the service'
 - Hosted in the EU (API and dashboard in the EU, database in Ireland); data minimisation
 - All tools are read-only (no data modification)
 - Rate limited per payment (abuse-proof)
+
+## FAQ
+
+**What is Limitguard?**
+Limitguard checks the company, sales lead or crypto wallet behind a deal before you call, sign or pay. It reads official sources (the KVK and KBO business registers, EU VAT through VIES, the OFAC, EU and UN sanctions lists and public blockchain data for wallets) and answers with what it found, where and when.
+
+**How is it priced?**
+Per check, with no subscription for API keys or x402: lead verify $0.27, company check $1.05 ($0.11 from cache when available), risk score $0.90, KYB check $1.50, sanctions screen $0.11, wallet screen $0.11, agent wallet check $0.75, company report $1.85. Free: the name sanctions preview, the wallet sanctions check and your own stored trust score. A check that fails is not charged. Live prices: [/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json).
+
+**How do I connect it to Claude, Cursor or another MCP client?**
+Add `https://api.limitguard.ai/mcp` with your API key in the header `Authorization: Bearer lg_live_...` (a free key: see [Authentication](#authentication)). In Claude you can instead add `https://api.limitguard.ai/mcp-oauth` as a custom connector and sign in with your Limitguard account; paid checks are then taken from your workspace credit.
+
+**Can an AI agent pay without an account?**
+Yes. Over REST or A2A an unpaid call returns HTTP 402 with the price. The agent signs a USDC payment on Base or Solana (x402), sends it with the call and gets the answer with a receipt. No account or API key is needed.
+
+**Which countries and chains does it cover?**
+Full business register coverage for the Netherlands (KVK) and Belgium (KBO), EU VAT numbers through VIES, worldwide sanctions lists (OFAC, EU and UN) and crypto wallets on Base and Solana.
 
 ## Links
 
