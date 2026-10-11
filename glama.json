@@ -82,9 +82,8 @@
         "wallet_address (required)",
         "chain_id"
       ],
-      "price_usdc": 0.0,
-      "status": "live",
-      "pricing_note": "Free: real wallet screening."
+      "price_usdc": 0.11,
+      "status": "live"
     },
     {
       "name": "get_risk_score",

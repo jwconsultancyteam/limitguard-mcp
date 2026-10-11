@@ -46,7 +46,7 @@ in [Full x402 API](#full-x402-api-direct-http).
 | Risk Score (`/v1/mcp/risk-score`) | $0.90 |
 | Check Agent (`/v1/mcp/check-agent`) | $0.00: hidden placeholder, not in `tools/list`; returns placeholder data |
 | Trust Score (`/v1/mcp/trust-score`) | $0.00, free (your own stored score) |
-| Verify Wallet (`/v1/mcp/verify-wallet`) | $0.11, free (real wallet screening) |
+| Verify Wallet (`/v1/mcp/verify-wallet`) | $0.11 |
 
 ## Authentication
 
