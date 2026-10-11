@@ -28,7 +28,7 @@ section: a change is released here at the moment it is merged.
 ## [2.11.0] - 2026-10-11
 
 ### Changed
-- Registry name is now `ai.limitguard.api/limitguard` (was `ai.limitguard.api/trust-intelligence`, an old product name). Registry names cannot be edited, so this is a new entry; the release workflow marks every version of the old name deprecated, pointing here. The server URL and the tools are unchanged.
+- Registry name is now `ai.limitguard.api/limitguard` (was `ai.limitguard.api/trust-intelligence`, an old product name). Registry names cannot be edited, so this is a new entry; the release workflow sets every version of the old name to deleted (the registry frees a server URL only then), with a message pointing here. The server URL and the tools are unchanged.
 
 ## [2.10.0] - 2026-10-11
 
