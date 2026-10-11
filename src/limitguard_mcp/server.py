@@ -24,6 +24,7 @@ from mcp.server.lowlevel import Server
 from mcp.server.stdio import stdio_server
 
 from limitguard_mcp import __version__
+from limitguard_mcp.guardrails import strip_internal_fields
 
 DEFAULT_BASE_URL = "https://api.limitguard.ai"
 KEY_ENV = "LIMITGUARD_API_KEY"
@@ -112,6 +113,10 @@ async def call_rest(
         payload: Any = response.json()
     except ValueError:
         payload = response.text
+    # REST routes can return more identifying data than the remote MCP tools.
+    # Filter once, before either MCP output representation is constructed.
+    if isinstance(payload, dict):
+        payload = strip_internal_fields(payload)
     if response.status_code >= 400:
         return _error(_problem_text(response.status_code, payload, rest_path))
     text = json.dumps(payload, ensure_ascii=False, indent=2) if not isinstance(payload, str) else payload

@@ -82,3 +82,43 @@ def test_network_failure_is_a_tool_error():
     result = _call("get_risk_score", {"entity_name": "Acme", "country": "NL"}, handler)
     assert result.is_error
     assert "Could not reach" in result.content[0].text
+
+
+def test_report_filters_identifying_fields_in_both_output_formats():
+    payload = {
+        "entity_name": "Example Person",
+        "report_hash": "public-report-hash",
+        "registry": {"address": "Private street", "country": "BE"},
+        "findings": [{"matched_name": "Example Person", "match_score": 0.9}],
+        "wallet_address": "0x1234567890abcdef1234567890abcdef12345678",
+        "iban": "BE68539007547034",
+        "email": "person@example.test",
+        "debug": {"message": "internal diagnostics"},
+        "sources_checked": ["registry", "sanctions"],
+    }
+    result = _call("get_compliance_report", {"check_id": "example"},
+                   lambda r: httpx.Response(201, json=payload))
+    expected = {
+        "report_hash": "public-report-hash",
+        "registry": {"country": "BE"},
+        "findings": [{"match_score": 0.9}],
+        "wallet_address": "0x1234...5678",
+        "iban": "BE****7034",
+        "email": "p***@example.test",
+        "sources_checked": ["registry", "sanctions"],
+    }
+    assert not result.is_error
+    assert result.structured_content == expected
+    assert json.loads(result.content[0].text) == expected
+    # Filtering must not mutate the original response object.
+    assert payload["registry"]["address"] == "Private street"
+
+
+def test_error_response_filters_nested_private_fields():
+    result = _call("get_compliance_report", {}, lambda r: httpx.Response(422, json={
+        "detail": "Invalid request",
+        "errors": [{"address": "Private street", "debug": "internal", "field": "country"}],
+    }))
+    assert result.is_error
+    body = json.loads(result.content[0].text.split("\n\n", 1)[1])
+    assert body == {"detail": "Invalid request", "errors": [{"field": "country"}]}
