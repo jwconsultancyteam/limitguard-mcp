@@ -1,8 +1,6 @@
 """Output privacy policy shared with the remote MCP transport.
 
-Ported from limitguard-ai apps/api/mcp_server/guardrails.py at
-49877230dd08c2783938c3a8941311555cc1d275. Keep the field policy and
-redaction behavior aligned when updating the remote MCP tools.
+Keep the field policy and redaction behavior aligned across MCP transports.
 """
 
 BLOCKED_FIELDS = frozenset({
@@ -50,7 +48,7 @@ SANCTIONS_PII_FIELDS = frozenset({
 def sanitize_sanctions_data(response: dict) -> dict:
     """Strip PII fields from sanctions screening data in MCP responses.
 
-    DYN-509: Sanctions data may contain natural-person PII. This function
+    Sanctions data may contain natural-person PII. This function
     removes those fields before the response crosses the trust boundary to
     third-party LLM providers.
 
@@ -113,7 +111,7 @@ def sanitize_sanctions_data(response: dict) -> dict:
 def strip_internal_fields(response: dict) -> dict:
     """Remove blocked fields and redact sensitive values from MCP response.
 
-    Applies BLOCKED_FIELDS removal, REDACT_FIELDS masking, and (DYN-509)
+    Applies BLOCKED_FIELDS removal, REDACT_FIELDS masking, and
     sanctions PII sanitization before returning the response.
 
     Args:
@@ -142,7 +140,7 @@ def strip_internal_fields(response: dict) -> dict:
         else:
             sanitized[key] = value
 
-    # DYN-509: Remove sanctions PII before response crosses LLM trust boundary
+    # Remove sanctions PII before response crosses LLM trust boundary
     return sanitize_sanctions_data(sanitized)
 
 
