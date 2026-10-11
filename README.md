@@ -228,6 +228,32 @@ npx -y @smithery/cli install team-mehs/limitguard
 Connect to `https://api.limitguard.ai/mcp` using Streamable HTTP transport (POST),
 sending `Authorization: Bearer <key>` on every `tools/call`.
 
+### Run locally (stdio)
+
+For a client that only runs local servers, this repository also ships a stdio server
+with the same tools. Each tool calls the Limitguard REST API with your key, so a paid
+call is debited from the key's prepaid balance; paying per call with x402 needs the
+remote server above.
+
+```bash
+uvx --from git+https://github.com/jwconsultancyteam/limitguard-mcp limitguard-mcp
+```
+
+```json
+{
+  "mcpServers": {
+    "limitguard": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/jwconsultancyteam/limitguard-mcp", "limitguard-mcp"],
+      "env": { "LIMITGUARD_API_KEY": "YOUR_LIMITGUARD_KEY" }
+    }
+  }
+}
+```
+
+Or in a container: `docker build -t limitguard-mcp .` then
+`docker run -i --rm -e LIMITGUARD_API_KEY limitguard-mcp`.
+
 ## Discovery Endpoints
 
 | Endpoint | URL |
