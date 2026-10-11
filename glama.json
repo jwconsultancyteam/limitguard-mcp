@@ -28,7 +28,7 @@
     ],
     "testnet_supported": false,
     "source_of_truth": "https://api.limitguard.ai/.well-known/x402.json",
-    "note": "Networks and testnet_supported mirror payment in the x402 manifest. Tools, descriptions and prices below mirror the live MCP server card (/.well-known/mcp/server-card.json) and x402 manifest as of 2026-10-06; a tool priced at 0 is free. check_agent, a $0 placeholder, stays callable but is hidden from tools/list and the server card, so it is not listed. The x402 manifest is authoritative; fetch it for current values."
+    "note": "Networks and testnet_supported mirror payment in the x402 manifest. Tools, descriptions and prices below mirror the live MCP server card (/.well-known/mcp/server-card.json) and x402 manifest as of 2026-10-12; a tool priced at 0 is free. check_agent, a $0 placeholder, stays callable but is hidden from tools/list and the server card, so it is not listed. The x402 manifest is authoritative; fetch it for current values."
   },
   "tools": [
     {
@@ -127,6 +127,18 @@
       "price_usdc": 0.0,
       "status": "live",
       "pricing_note": "Free: yes/no preview, 10 per caller per UTC day."
+    },
+    {
+      "name": "wallet_sanctions_preview",
+      "title": "Wallet sanctions check",
+      "description": "Free yes/no check of a wallet address against the OFAC SDN list: sanctioned, lists, the list date and its freshness, no programmes or entry ids. 10 per caller per UTC day, separate from sanctions_preview. The full wallet screen is verify_wallet ($0.11).",
+      "inputs": [
+        "wallet_address (required)",
+        "chain_id"
+      ],
+      "price_usdc": 0.0,
+      "status": "live",
+      "pricing_note": "Free: yes/no OFAC check of a wallet address, 10 per caller per UTC day."
     },
     {
       "name": "sanctions_screen",
