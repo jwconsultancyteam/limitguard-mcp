@@ -1,5 +1,5 @@
 {
-  "_generated": "From https://api.limitguard.ai/.well-known/mcp/server-card.json by limitguard-ai scripts/sync_public_repos.py. Do not edit by hand.",
+  "_generated": "Generated from https://api.limitguard.ai/.well-known/mcp/server-card.json. Do not edit by hand.",
   "tools": [
     {
       "name": "check_entity",
