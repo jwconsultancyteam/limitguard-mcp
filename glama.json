@@ -12,7 +12,8 @@
     "security"
   ],
   "maintainers": [
-    "jwconsultancyteam"
+    "jwconsultancyteam",
+    "JWconsultancy1234"
   ],
   "auth": {
     "rest": "x402 pay-per-call, no API key, no signup",
