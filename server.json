@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/limitguard",
   "title": "Limitguard Lead Verification",
   "description": "Lead validation over MCP: KVK/KBO register, EU VAT, sanctions and email checks with sources.",
-  "version": "2.11.2",
+  "version": "2.11.3",
   "websiteUrl": "https://limitguard.ai",
   "icons": [
     {
@@ -79,10 +79,11 @@
         ]
       },
       "annotations": {
-        "readOnlyHint": false,
+        "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": false,
-        "openWorldHint": true
+        "openWorldHint": true,
+        "title": "Check entity trust"
       }
     },
     {
@@ -104,7 +105,8 @@
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
-        "openWorldHint": true
+        "openWorldHint": false,
+        "title": "Get stored trust score"
       }
     },
     {
@@ -130,7 +132,8 @@
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": false,
-        "openWorldHint": true
+        "openWorldHint": true,
+        "title": "Screen wallet"
       }
     },
     {
@@ -154,10 +157,11 @@
         ]
       },
       "annotations": {
-        "readOnlyHint": false,
+        "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": false,
-        "openWorldHint": false
+        "openWorldHint": true,
+        "title": "Get risk score"
       }
     },
     {
@@ -213,7 +217,8 @@
         "readOnlyHint": false,
         "destructiveHint": false,
         "idempotentHint": false,
-        "openWorldHint": true
+        "openWorldHint": true,
+        "title": "Get compliance report"
       }
     },
     {
@@ -239,7 +244,8 @@
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": true,
-        "openWorldHint": true
+        "openWorldHint": true,
+        "title": "Sanctions preview"
       }
     },
     {
@@ -265,7 +271,8 @@
         "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": false,
-        "openWorldHint": true
+        "openWorldHint": true,
+        "title": "Wallet sanctions check"
       }
     },
     {
@@ -288,10 +295,11 @@
         ]
       },
       "annotations": {
-        "readOnlyHint": false,
+        "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": false,
-        "openWorldHint": true
+        "openWorldHint": true,
+        "title": "Sanctions screen"
       }
     },
     {
@@ -318,10 +326,11 @@
         ]
       },
       "annotations": {
-        "readOnlyHint": false,
+        "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": false,
-        "openWorldHint": true
+        "openWorldHint": true,
+        "title": "Check agent wallet"
       }
     },
     {
@@ -396,10 +405,11 @@
         ]
       },
       "annotations": {
-        "readOnlyHint": false,
+        "readOnlyHint": true,
         "destructiveHint": false,
         "idempotentHint": false,
-        "openWorldHint": true
+        "openWorldHint": true,
+        "title": "Verify a sales lead"
       }
     }
   ]

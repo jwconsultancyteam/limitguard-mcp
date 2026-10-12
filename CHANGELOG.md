@@ -25,6 +25,20 @@ which renders this repository from that service's
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [2.11.3] - 2026-10-12
+
+### Changed
+- Tool `check_agent_wallet` annotations corrected.
+- Tool `check_entity` annotations corrected.
+- Tool `get_compliance_report` annotations corrected.
+- Tool `get_risk_score` annotations corrected.
+- Tool `get_trust_score` annotations corrected.
+- Tool `sanctions_preview` annotations corrected.
+- Tool `sanctions_screen` annotations corrected.
+- Tool `verify_lead` annotations corrected.
+- Tool `verify_wallet` annotations corrected.
+- Tool `wallet_sanctions_preview` annotations corrected.
+
 ## [2.11.2] - 2026-10-11
 
 ### Changed
