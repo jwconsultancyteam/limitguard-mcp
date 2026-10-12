@@ -5,6 +5,8 @@
 
 # Limitguard MCP Server
 
+[![Limitguard MCP server: quality and maintenance score on Glama](https://glama.ai/mcp/servers/jwconsultancyteam/limitguard-mcp/badges/card.svg)](https://glama.ai/mcp/servers/jwconsultancyteam/limitguard-mcp)
+
 Check Dutch and Belgian companies, sales leads and crypto wallets before you deal with them, over the [Model Context Protocol](https://modelcontextprotocol.io/): the KVK (Netherlands) and KBO (Belgium) registers, EU VAT (VIES), the OFAC, EU and UN sanctions lists and wallet risk on Base and Solana, with the source and date of every answer.
 
 **Server URL:** `https://api.limitguard.ai/mcp`
