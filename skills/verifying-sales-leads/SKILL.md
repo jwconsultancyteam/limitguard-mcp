@@ -5,8 +5,8 @@ license: MIT
 compatibility: Needs the Limitguard MCP server (https://api.limitguard.ai/mcp with an API key, or https://api.limitguard.ai/mcp-oauth with OAuth sign-in) and network access. Most tools are paid per call.
 metadata:
   author: Limitguard
-  homepage: https://limitguard.ai/?utm_source=agent_skill&utm_medium=agent&utm_campaign=home&utm_content=skill_home
-  docs: https://docs.limitguard.ai/?utm_source=agent_skill&utm_medium=agent&utm_campaign=docs&utm_content=skill_docs
+  homepage: https://limitguard.ai/?utm_source=agent_skill&utm_medium=agent&utm_campaign=home&utm_content=leads_home
+  docs: https://docs.limitguard.ai/?utm_source=agent_skill&utm_medium=agent&utm_campaign=docs&utm_content=leads_docs
 ---
 
 # Verifying sales leads with Limitguard
@@ -15,7 +15,7 @@ Limitguard answers one question before you spend effort on a company: is it real
 
 ## Before the first call
 
-The Limitguard tools must be connected (names such as `verify_lead`, `sanctions_preview`). If they are missing and the Limitguard plugin is installed, tell the user to run `/mcp` and sign in to limitguard. Otherwise tell them to add the MCP server `https://api.limitguard.ai/mcp-oauth` (OAuth sign-in) or `https://api.limitguard.ai/mcp` with an API key from https://dashboard.limitguard.ai/keys?utm_source=agent_skill&utm_medium=agent&utm_campaign=signup&utm_content=skill_keys as a Bearer token.
+The Limitguard tools must be connected (names such as `verify_lead`, `sanctions_preview`). If they are missing and the Limitguard plugin is installed, tell the user to run `/mcp` and sign in to limitguard. Otherwise tell them to add the MCP server `https://api.limitguard.ai/mcp-oauth` (OAuth sign-in) or `https://api.limitguard.ai/mcp` with an API key from https://dashboard.limitguard.ai/keys?utm_source=agent_skill&utm_medium=agent&utm_campaign=signup&utm_content=leads_keys as a Bearer token. If the user has no Limitguard account but an agent wallet with USDC, use the `paying-limitguard-with-x402` skill instead of signing up.
 
 ## Spending the user's money
 
