@@ -1,0 +1,66 @@
+[
+  {
+    "query": "is this wallet sanctioned? 0xabc...",
+    "should_trigger": true
+  },
+  {
+    "query": "screen this Base address before I send USDC",
+    "should_trigger": true
+  },
+  {
+    "query": "check the Solana wallet we are paying out to for OFAC",
+    "should_trigger": true
+  },
+  {
+    "query": "can my agent trust this other agent's wallet and ERC-8004 id?",
+    "should_trigger": true
+  },
+  {
+    "query": "vet the counterparty agent before the x402 payment",
+    "should_trigger": true
+  },
+  {
+    "query": "is it safe to receive funds from this address?",
+    "should_trigger": true
+  },
+  {
+    "query": "run an AML screen on these payout wallets",
+    "should_trigger": true
+  },
+  {
+    "query": "does this wallet have risky on-chain activity?",
+    "should_trigger": true
+  },
+  {
+    "query": "what is my MetaMask balance?",
+    "should_trigger": false
+  },
+  {
+    "query": "should I buy ETH now?",
+    "should_trigger": false
+  },
+  {
+    "query": "create a new Solana wallet for me",
+    "should_trigger": false
+  },
+  {
+    "query": "is this Dutch company real? KVK 17085815",
+    "should_trigger": false
+  },
+  {
+    "query": "explain what ERC-8004 is",
+    "should_trigger": false
+  },
+  {
+    "query": "send 10 USDC to this address",
+    "should_trigger": false
+  },
+  {
+    "query": "write a smart contract for an escrow",
+    "should_trigger": false
+  },
+  {
+    "query": "what gas fee will this transaction cost?",
+    "should_trigger": false
+  }
+]

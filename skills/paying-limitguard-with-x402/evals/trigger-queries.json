@@ -1,0 +1,66 @@
+[
+  {
+    "query": "the Limitguard API returned HTTP 402, how do I pay it?",
+    "should_trigger": true
+  },
+  {
+    "query": "pay per call for a company check without signing up",
+    "should_trigger": true
+  },
+  {
+    "query": "how does my agent pay Limitguard with x402 USDC on Base?",
+    "should_trigger": true
+  },
+  {
+    "query": "use a2a-x402 to pay the Limitguard verify_wallet skill",
+    "should_trigger": true
+  },
+  {
+    "query": "my agent has a wallet but no API key, check this lead via Limitguard",
+    "should_trigger": true
+  },
+  {
+    "query": "what does PAYMENT-SIGNATURE need for the Limitguard quote?",
+    "should_trigger": true
+  },
+  {
+    "query": "got errorCode expired_payment from api.limitguard.ai",
+    "should_trigger": true
+  },
+  {
+    "query": "pay Limitguard from Solana USDC per request",
+    "should_trigger": true
+  },
+  {
+    "query": "pay my electricity bill",
+    "should_trigger": false
+  },
+  {
+    "query": "how do I set up Stripe checkout?",
+    "should_trigger": false
+  },
+  {
+    "query": "send USDC to my friend",
+    "should_trigger": false
+  },
+  {
+    "query": "explain the HTTP 402 status code history",
+    "should_trigger": false
+  },
+  {
+    "query": "build an x402 paywall for my own API",
+    "should_trigger": false
+  },
+  {
+    "query": "top up my OpenAI credits",
+    "should_trigger": false
+  },
+  {
+    "query": "is this wallet sanctioned?",
+    "should_trigger": false
+  },
+  {
+    "query": "verify this Dutch lead with my Limitguard API key",
+    "should_trigger": false
+  }
+]

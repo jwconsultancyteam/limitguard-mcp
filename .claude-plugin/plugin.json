@@ -1,0 +1,30 @@
+{
+  "name": "limitguard",
+  "version": "2.11.4",
+  "description": "Verify Dutch and Belgian sales leads and counterparties (KVK and KBO registers, EU VAT, OFAC, EU and UN sanctions), screen crypto wallets and counterparty agents on EVM chains and Solana, and pay per call with x402.",
+  "author": {
+    "name": "Limitguard",
+    "email": "support@limitguard.ai",
+    "url": "https://limitguard.ai/?utm_source=agent_skill&utm_medium=agent&utm_campaign=home&utm_content=plugin_author"
+  },
+  "homepage": "https://docs.limitguard.ai/?utm_source=agent_skill&utm_medium=agent&utm_campaign=docs&utm_content=plugin_homepage",
+  "repository": "https://github.com/jwconsultancyteam/limitguard-mcp",
+  "license": "MIT",
+  "keywords": [
+    "lead-validation",
+    "kyb",
+    "sanctions",
+    "kvk",
+    "kbo",
+    "vies",
+    "wallet-screening",
+    "x402",
+    "mcp"
+  ],
+  "mcpServers": {
+    "limitguard": {
+      "type": "http",
+      "url": "https://api.limitguard.ai/mcp-oauth"
+    }
+  }
+}

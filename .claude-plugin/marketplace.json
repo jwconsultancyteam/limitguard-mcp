@@ -1,0 +1,30 @@
+{
+  "name": "limitguard",
+  "description": "Limitguard's agent skills and MCP server: lead and company checks for the Netherlands and Belgium, sanctions and wallet screening, and x402 pay-per-call.",
+  "owner": {
+    "name": "Limitguard",
+    "email": "support@limitguard.ai",
+    "url": "https://limitguard.ai/?utm_source=agent_skill&utm_medium=agent&utm_campaign=home&utm_content=plugin_owner"
+  },
+  "plugins": [
+    {
+      "name": "limitguard",
+      "source": "./",
+      "description": "Verify Dutch and Belgian sales leads and counterparties (KVK and KBO registers, EU VAT, OFAC, EU and UN sanctions), screen crypto wallets and counterparty agents on EVM chains and Solana, and pay per call with x402.",
+      "category": "productivity",
+      "tags": [
+        "lead-validation",
+        "kyb",
+        "sanctions",
+        "wallet-screening",
+        "x402",
+        "mcp"
+      ],
+      "skills": [
+        "./skills/verifying-sales-leads",
+        "./skills/screening-crypto-wallets",
+        "./skills/paying-limitguard-with-x402"
+      ]
+    }
+  ]
+}

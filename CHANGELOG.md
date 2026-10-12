@@ -25,6 +25,12 @@ which renders this repository from that service's
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [2.11.4] - 2026-10-12
+
+### Added
+- Agent skills (Agent Skills spec): `verifying-sales-leads` (lead and company checks), `screening-crypto-wallets` (wallet and counterparty agent screening) and `paying-limitguard-with-x402` (pay per call with x402 over HTTP or A2A), each with spending rules and evals.
+- Claude Code plugin manifests in `.claude-plugin/`: the three skills plus the OAuth MCP server, installable with `/plugin marketplace add jwconsultancyteam/limitguard-mcp`.
+
 ## [2.11.3] - 2026-10-12
 
 ### Changed
