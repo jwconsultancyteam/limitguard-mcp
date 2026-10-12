@@ -1,6 +1,6 @@
 ---
 name: verifying-sales-leads
-description: Verifies Dutch and Belgian B2B sales leads and business counterparties with the Limitguard MCP server, covering KVK and KBO register status, EU VAT numbers (VIES), the email domain and IBAN, and OFAC, EU and UN sanctions screening of company names and EVM or Solana wallets. Use when the user asks whether a Dutch or Belgian company or lead is real, active and safe to contact, pay or onboard, gives a KVK, KBO or VAT number to check, wants a B2B lead list cleaned, or wants a counterparty, payee or crypto wallet screened for sanctions before paying. Not for finding new leads, writing outreach, or register checks outside the Netherlands and Belgium. Requires the Limitguard MCP server; most checks are paid per call.
+description: Verifies Dutch and Belgian B2B sales leads and business counterparties with the Limitguard MCP server, covering KVK and KBO register status, EU VAT numbers (VIES), the email domain and IBAN, and OFAC, EU and UN sanctions screening of company and counterparty names. Use when the user asks whether a Dutch or Belgian company or lead is real, active and safe to contact, pay or onboard, gives a KVK, KBO or VAT number to check, wants a B2B lead list cleaned, or wants a counterparty or payee name screened for sanctions. Not for crypto wallets, finding new leads, writing outreach, or register checks outside the Netherlands and Belgium. Requires the Limitguard MCP server; most checks are paid per call.
 license: MIT
 compatibility: Needs the Limitguard MCP server (https://api.limitguard.ai/mcp with an API key, or https://api.limitguard.ai/mcp-oauth with OAuth sign-in) and network access. Most tools are paid per call.
 metadata:
@@ -11,7 +11,7 @@ metadata:
 
 # Verifying sales leads with Limitguard
 
-Limitguard answers one question before you spend effort on a company: is it real, active and safe to deal with? Every answer carries its source. Register coverage is the Netherlands (KVK) and Belgium (KBO); VAT works for EU numbers; sanctions and wallet checks work for any name or address.
+Limitguard answers one question before you spend effort on a company: is it real, active and safe to deal with? Every answer carries its source. Register coverage is the Netherlands (KVK) and Belgium (KBO); VAT works for EU numbers; the sanctions screen works for any name. For crypto wallets and counterparty agents, use the `screening-crypto-wallets` skill.
 
 ## Before the first call
 
@@ -28,9 +28,6 @@ Most tools are paid per call from the user's Limitguard balance. Before a paid c
 | A Dutch or Belgian sales lead checked | `verify_lead` | paid |
 | A quick "is this name on a sanctions list?" | `sanctions_preview` | free |
 | The sanctions entries behind a possible match | `sanctions_screen` | paid |
-| A wallet checked quickly | `wallet_sanctions_preview` | free |
-| A full wallet screen | `verify_wallet` | paid |
-| A counterparty agent's wallet and ERC-8004 identity | `check_agent_wallet` | paid |
 | A trust score with factors for a company (Dutch register) | `check_entity` | paid |
 | A risk score from sanctions and country only | `get_risk_score` | paid |
 | A full written report on one company | `get_compliance_report` | paid |
@@ -63,6 +60,6 @@ Screen a person's name only for a named counterparty, payee or director the user
 - `check_entity` reads the Dutch register only. For a Belgian company use `verify_lead` with the KBO number.
 - The two scores run in opposite directions: `check_entity` returns `trust_score` (100 is best); `get_risk_score` returns `risk_score` (100 is riskiest).
 - `check_entity` returns a `recommendation`: `proceed` (80 to 100), `review` (60 to 79), `enhanced_due_diligence` (40 to 59) or `block` (0 to 39).
-- `sanctions_preview` and `wallet_sanctions_preview` allow 10 calls per caller per UTC day each. When the limit is reached, offer the paid screen instead of retrying.
-- `get_trust_score` runs no new check and finds only scores from `check_entity` and wallet checks, by the name as sent to `check_entity`. Use it before re-running `check_entity` on the same company.
+- `sanctions_preview` allows 10 calls per caller per UTC day. When the limit is reached, offer `sanctions_screen` (paid) instead of retrying.
+- `get_trust_score` runs no new check and finds only stored `check_entity` scores, by the name as sent to `check_entity`. Use it before re-running `check_entity` on the same company.
 - If `verify_lead` refuses `phone`, call again without it.

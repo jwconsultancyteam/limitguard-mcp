@@ -28,8 +28,8 @@ section: a change is released here at the moment it is merged.
 ## [2.11.4] - 2026-10-12
 
 ### Added
-- Agent skill `skills/verifying-sales-leads`: when to call which tool, spending rules and how to read a lead verdict (Agent Skills spec).
-- Claude Code plugin manifests in `.claude-plugin/`: the skill plus the OAuth MCP server, installable with `/plugin marketplace add jwconsultancyteam/limitguard-mcp`.
+- Agent skills (Agent Skills spec): `verifying-sales-leads` (lead and company checks), `screening-crypto-wallets` (wallet and counterparty agent screening) and `paying-limitguard-with-x402` (pay per call with x402 over HTTP or A2A), each with spending rules and evals.
+- Claude Code plugin manifests in `.claude-plugin/`: the three skills plus the OAuth MCP server, installable with `/plugin marketplace add jwconsultancyteam/limitguard-mcp`.
 
 ## [2.11.3] - 2026-10-12
 

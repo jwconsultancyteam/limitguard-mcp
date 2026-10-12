@@ -17,11 +17,11 @@
   },
   {
     "query": "is it safe to send USDC to this Base wallet? check it first",
-    "should_trigger": true
+    "should_trigger": false
   },
   {
     "query": "vet this counterparty agent's wallet and its ERC-8004 identity",
-    "should_trigger": true
+    "should_trigger": false
   },
   {
     "query": "clean my lead list: drop companies that are not active anymore",

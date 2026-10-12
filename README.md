@@ -257,20 +257,26 @@ uvx --from git+https://github.com/jwconsultancyteam/limitguard-mcp limitguard-mc
 Or in a container: `docker build -t limitguard-mcp .` then
 `docker run -i --rm -e LIMITGUARD_API_KEY limitguard-mcp`.
 
-## Agent skill
+## Agent skills
 
-[`skills/verifying-sales-leads`](skills/verifying-sales-leads/SKILL.md) is an [Agent Skill](https://agentskills.io) that teaches an agent when to call which tool, the cheapest order of calls, and how to read a lead verdict. It works with any agent that reads `SKILL.md` files.
+Three [Agent Skills](https://agentskills.io) teach an agent when to call which tool, how to spend the user's balance safely, and how to read each answer. They work with any agent that reads `SKILL.md` files.
 
-- Claude Code (skill plus the MCP server, OAuth sign-in):
+| Skill | For |
+|---|---|
+| [`verifying-sales-leads`](skills/verifying-sales-leads/SKILL.md) | Dutch and Belgian leads and companies: register, VAT, mail server, IBAN, name sanctions |
+| [`screening-crypto-wallets`](skills/screening-crypto-wallets/SKILL.md) | Wallets and counterparty agents: OFAC SDN address list, on-chain risk, ERC-8004 identity |
+| [`paying-limitguard-with-x402`](skills/paying-limitguard-with-x402/SKILL.md) | Agents without an API key: pay per call with x402 over HTTP or A2A, with a price ceiling |
+
+- Claude Code (all three skills plus the MCP server, OAuth sign-in):
 
   ```
   /plugin marketplace add jwconsultancyteam/limitguard-mcp
   /plugin install limitguard@limitguard
   ```
 
-- Other agents: `npx skills add jwconsultancyteam/limitguard-mcp`, or copy the `skills/verifying-sales-leads` folder into the agent's skills directory.
+- Other agents: `npx skills add jwconsultancyteam/limitguard-mcp`, or copy a folder under `skills/` into the agent's skills directory. Each folder works on its own.
 
-The tool and price reference in `references/tools.md` is generated from the served server card; do not edit it by hand.
+Each skill's `references/tools.md` is generated from the served server card; do not edit it by hand.
 
 ## Discovery Endpoints
 

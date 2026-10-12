@@ -79,10 +79,12 @@ def test_prices_live_only_in_the_generated_reference(path):
     """references/tools.md is regenerated nightly from the API; a price in the prose would go stale."""
     _, body = _frontmatter(path)
     assert not re.search(r"\$\d+\.\d\d", body), "write free/paid and point at references/tools.md"
+    routed = set(re.findall(r"\| `([a-z_]+)` \| (?:free|paid) \|", body))
+    if not routed:
+        return  # a skill that routes to no MCP tool (paying-limitguard-with-x402) has no reference
     tools_md = (path.parent / "references/tools.md").read_text(encoding="utf-8")
     listed = set(re.findall(r"^\| `([a-z_]+)` \|", tools_md, re.M))
-    routed = set(re.findall(r"\| `([a-z_]+)` \| (?:free|paid) \|", body))
-    assert routed and routed <= listed, routed - listed
+    assert routed == listed, f"routed {sorted(routed)} vs generated {sorted(listed)}"
 
 
 def test_evals_have_unique_ids():
@@ -97,3 +99,11 @@ def test_the_plugin_ships_the_oauth_server_and_the_listing_version():
     assert plugin["mcpServers"]["limitguard"]["url"] == "https://api.limitguard.ai/mcp-oauth"
     # Claude Code keeps an installed plugin on this version; the nightly sync moves both.
     assert plugin["version"] == listing["version"]
+
+
+def test_skills_do_not_reach_into_each_other():
+    """Each folder must work when copied alone: links stay inside the skill."""
+    for path in SKILL_FILES:
+        _, body = _frontmatter(path)
+        for target in re.findall(r"\]\(([^)#]+)\)", body):
+            assert not target.startswith(("..", "/", "skills/")), (path.parent.name, target)

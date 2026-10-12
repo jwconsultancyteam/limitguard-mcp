@@ -8,13 +8,10 @@ Prices are per call in USD, paid from the API key's prepaid balance or with x402
 |---|---|---|---|
 | `check_entity` | $1.05 | `entity_name`, `country` | `kvk_number`, `domain` |
 | `get_trust_score` | free | `entity_id` | none |
-| `verify_wallet` | $0.11 | `wallet_address` | `chain_id` |
 | `get_risk_score` | $0.90 | `entity_name`, `country` | none |
 | `get_compliance_report` | $1.85 | none | `entity_name`, `country`, `kvk_number`, `cbe_number`, `vat_number`, `domain`, `iban`, `wallet_address`, `wallet_chain`, `check_id` |
 | `sanctions_preview` | free | `name` | `country` |
-| `wallet_sanctions_preview` | free | `wallet_address` | `chain_id` |
 | `sanctions_screen` | $0.11 | `name` | `country` |
-| `check_agent_wallet` | $0.75 | `wallet` | `agent_id`, `domain` |
 | `verify_lead` | $0.27 | `country` | `company_number`, `name`, `vat_number`, `email`, `domain`, `address`, `iban`, `phone`, `target_industries`, `target_size` |
 
 ## check_entity
@@ -31,13 +28,6 @@ Company check on a business: sanctions screening and country risk, the Dutch KVK
 Look up your own most recent trust score for an entity you checked before, from your stored checks: score, level, when, which product, trend and how many checks are on record. Runs no new check and calls no data source. Free ($0).
 
 - `entity_id`: Entity name, as sent to check_entity
-
-## verify_wallet
-
-Screen a wallet: OFAC SDN address match, on-chain signals (contract check, native and USDC balance, transaction count, first seen on Base) and named risk rules with up to 3 advice items. On Base, also reports any ERC-8004 agent the wallet owns and its open on-chain reputation as descriptive signals, never scored. $0.11. Supports EVM and Solana addresses.
-
-- `wallet_address`: Blockchain wallet address
-- `chain_id`: CAIP-2 chain ID (default: eip155:8453 for Base); base, eth, solana, btc also accepted
 
 ## get_risk_score
 
@@ -68,27 +58,12 @@ Free yes/no sanctions preview against the local OFAC SDN, EU and UN lists. Retur
 - `name`: Company or person name to screen
 - `country`: Optional ISO 3166-1 alpha-2 country code (orders matches, never excludes one)
 
-## wallet_sanctions_preview
-
-Free yes/no check of a wallet address against the OFAC SDN list: sanctioned, lists, the list date and its freshness, no programmes or entry ids. 10 per caller per UTC day, separate from sanctions_preview. The full wallet screen is verify_wallet ($0.11).
-
-- `wallet_address`: Blockchain wallet address
-- `chain_id`: CAIP-2 chain ID (default: eip155:8453 for Base); base, eth, solana, btc also accepted
-
 ## sanctions_screen
 
 Sanctions screen against the local OFAC SDN, EU and UN lists: matched entries with list, entry id, programmes, countries, listing date and match score. A name match is not a determination.
 
 - `name`: Company or person name to screen
 - `country`: Optional ISO 3166-1 alpha-2 country code (orders matches, never excludes one)
-
-## check_agent_wallet
-
-Check a counterparty agent's EVM wallet in one call: OFAC SDN digital-currency address list match, Base USDC and ETH balance, ERC-8004 identity registration (and, given an agent id, that agent's owner and payment wallet) and open ERC-8004 feedback, which is not scored. $0.75.
-
-- `wallet`: EVM wallet address (0x + 40 hex characters)
-- `agent_id`: Optional ERC-8004 agentId (decimal) the wallet claims
-- `domain`: Optional website domain the agent gives for itself (e.g. example.com)
 
 ## verify_lead
 

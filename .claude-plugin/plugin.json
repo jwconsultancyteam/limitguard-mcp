@@ -1,7 +1,7 @@
 {
   "name": "limitguard",
   "version": "2.11.4",
-  "description": "Verify Dutch and Belgian sales leads and counterparties: KVK and KBO registers, EU VAT, OFAC, EU and UN sanctions, and wallet screening on EVM chains and Solana.",
+  "description": "Verify Dutch and Belgian sales leads and counterparties (KVK and KBO registers, EU VAT, OFAC, EU and UN sanctions), screen crypto wallets and counterparty agents on EVM chains and Solana, and pay per call with x402.",
   "author": {
     "name": "Limitguard",
     "email": "support@limitguard.ai",
@@ -18,6 +18,7 @@
     "kbo",
     "vies",
     "wallet-screening",
+    "x402",
     "mcp"
   ],
   "mcpServers": {
