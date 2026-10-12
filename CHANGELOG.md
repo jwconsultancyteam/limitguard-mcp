@@ -25,6 +25,12 @@ which renders this repository from that service's
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [2.11.4] - 2026-10-12
+
+### Added
+- Agent skill `skills/verifying-sales-leads`: when to call which tool, spending rules and how to read a lead verdict (Agent Skills spec).
+- Claude Code plugin manifests in `.claude-plugin/`: the skill plus the OAuth MCP server, installable with `/plugin marketplace add jwconsultancyteam/limitguard-mcp`.
+
 ## [2.11.3] - 2026-10-12
 
 ### Changed

@@ -3,7 +3,7 @@
   "name": "ai.limitguard.api/limitguard",
   "title": "Limitguard Lead Verification",
   "description": "Lead validation over MCP: KVK/KBO register, EU VAT, sanctions and email checks with sources.",
-  "version": "2.11.3",
+  "version": "2.11.4",
   "websiteUrl": "https://limitguard.ai",
   "icons": [
     {

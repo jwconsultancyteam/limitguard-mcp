@@ -1,12 +1,25 @@
 {
   "name": "limitguard",
-  "version": "1.0.0",
+  "version": "2.11.4",
   "description": "Verify Dutch and Belgian sales leads and counterparties: KVK and KBO registers, EU VAT, OFAC, EU and UN sanctions, and wallet screening on Base and Solana.",
-  "author": { "name": "Limitguard", "email": "support@limitguard.ai", "url": "https://limitguard.ai" },
-  "homepage": "https://docs.limitguard.ai",
+  "author": {
+    "name": "Limitguard",
+    "email": "support@limitguard.ai",
+    "url": "https://limitguard.ai"
+  },
+  "homepage": "https://docs.limitguard.ai/?utm_source=agent_skill&utm_medium=agent&utm_campaign=docs&utm_content=plugin_homepage",
   "repository": "https://github.com/jwconsultancyteam/limitguard-mcp",
   "license": "MIT",
-  "keywords": ["lead-validation", "kyb", "sanctions", "kvk", "kbo", "vies", "wallet-screening", "mcp"],
+  "keywords": [
+    "lead-validation",
+    "kyb",
+    "sanctions",
+    "kvk",
+    "kbo",
+    "vies",
+    "wallet-screening",
+    "mcp"
+  ],
   "mcpServers": {
     "limitguard": {
       "type": "http",

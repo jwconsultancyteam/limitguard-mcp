@@ -38,6 +38,7 @@ def test_frontmatter_follows_the_spec(path):
     assert NAME.match(name) and len(name) <= 64, name
     assert name == path.parent.name, "name must match the folder"
     assert "anthropic" not in name and "claude" not in name
+    assert fields["description"] not in (">", "|", ">-", "|-"), "write the description on one line"
     assert 0 < len(fields["description"]) <= 1024
     assert "<" not in fields["description"], "no XML tags in the description"
     assert len(fields.get("compatibility", "")) <= 500
@@ -71,3 +72,28 @@ def test_the_plugin_lists_every_skill():
     (entry,) = marketplace["plugins"]
     assert entry["name"] == plugin["name"]
     assert sorted(entry["skills"]) == sorted(f"./skills/{p.parent.name}" for p in SKILL_FILES)
+
+
+@pytest.mark.parametrize("path", SKILL_FILES, ids=lambda p: p.parent.name)
+def test_prices_live_only_in_the_generated_reference(path):
+    """references/tools.md is regenerated nightly from the API; a price in the prose would go stale."""
+    _, body = _frontmatter(path)
+    assert not re.search(r"\$\d+\.\d\d", body), "write free/paid and point at references/tools.md"
+    tools_md = (path.parent / "references/tools.md").read_text(encoding="utf-8")
+    listed = set(re.findall(r"^\| `([a-z_]+)` \|", tools_md, re.M))
+    routed = set(re.findall(r"\| `([a-z_]+)` \| (?:free|paid) \|", body))
+    assert routed and routed <= listed, routed - listed
+
+
+def test_evals_have_unique_ids():
+    for evals in SKILLS.glob("*/evals/evals.json"):
+        ids = [e["id"] for e in json.loads(evals.read_text(encoding="utf-8"))["evals"]]
+        assert len(ids) >= 3 and len(ids) == len(set(ids)), evals
+
+
+def test_the_plugin_ships_the_oauth_server_and_the_listing_version():
+    plugin = json.loads((ROOT / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
+    listing = json.loads((ROOT / "server.json").read_text(encoding="utf-8"))
+    assert plugin["mcpServers"]["limitguard"]["url"] == "https://api.limitguard.ai/mcp-oauth"
+    # Claude Code keeps an installed plugin on this version; the nightly sync moves both.
+    assert plugin["version"] == listing["version"]
