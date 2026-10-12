@@ -257,6 +257,21 @@ uvx --from git+https://github.com/jwconsultancyteam/limitguard-mcp limitguard-mc
 Or in a container: `docker build -t limitguard-mcp .` then
 `docker run -i --rm -e LIMITGUARD_API_KEY limitguard-mcp`.
 
+## Agent skill
+
+[`skills/verifying-sales-leads`](skills/verifying-sales-leads/SKILL.md) is an [Agent Skill](https://agentskills.io) that teaches an agent when to call which tool, the cheapest order of calls, and how to read a lead verdict. It works with any agent that reads `SKILL.md` files.
+
+- Claude Code (skill plus the MCP server, OAuth sign-in):
+
+  ```
+  /plugin marketplace add jwconsultancyteam/limitguard-mcp
+  /plugin install limitguard@limitguard
+  ```
+
+- Other agents: `npx skills add jwconsultancyteam/limitguard-mcp`, or copy the `skills/verifying-sales-leads` folder into the agent's skills directory.
+
+The tool and price reference in `references/tools.md` is generated from the served server card; do not edit it by hand.
+
 ## Discovery Endpoints
 
 | Endpoint | URL |

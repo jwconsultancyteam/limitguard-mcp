@@ -1,0 +1,22 @@
+[
+  {"query": "Is this Dutch company real and still active? KVK 17085815", "should_trigger": true},
+  {"query": "verify this sales lead before I call: Proximus, Belgium", "should_trigger": true},
+  {"query": "Can you check if this VAT number NL123456789B01 belongs to the company?", "should_trigger": true},
+  {"query": "screen 'Acme Trading LLC' against OFAC and EU sanctions", "should_trigger": true},
+  {"query": "is it safe to send USDC to this Base wallet? check it first", "should_trigger": true},
+  {"query": "vet this counterparty agent's wallet and its ERC-8004 identity", "should_trigger": true},
+  {"query": "clean my lead list: drop companies that are not active anymore", "should_trigger": true},
+  {"query": "KBO number 0202.239.951, is the company still trading?", "should_trigger": true},
+  {"query": "before onboarding this supplier, run a KYB check on it", "should_trigger": true},
+  {"query": "does this email domain of the lead even receive mail?", "should_trigger": true},
+  {"query": "write a cold email to a Dutch logistics company", "should_trigger": false},
+  {"query": "what is the corporate tax rate in the Netherlands?", "should_trigger": false},
+  {"query": "build a CRM pipeline in HubSpot for my sales team", "should_trigger": false},
+  {"query": "convert this CSV of leads to Excel", "should_trigger": false},
+  {"query": "explain how the EU sanctions regime works in general", "should_trigger": false},
+  {"query": "find me 50 SaaS companies in Germany to prospect", "should_trigger": false},
+  {"query": "what is my wallet balance in MetaMask?", "should_trigger": false},
+  {"query": "register a new BV at the KVK for me", "should_trigger": false},
+  {"query": "summarise this annual report PDF", "should_trigger": false},
+  {"query": "translate this sales pitch to Dutch", "should_trigger": false}
+]

@@ -1,0 +1,30 @@
+{
+  "skill_name": "verifying-sales-leads",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Is this lead real? ASML Holding N.V., KVK 17085815, contact sales@asml.com",
+      "expected_output": "Calls verify_lead once with country NL, company_number 17085815, name and email; reports the verdict in plain words, any flags with the findings' own actions, and the lead score; names KVK as the source."
+    },
+    {
+      "id": 2,
+      "prompt": "Check the Belgian prospect Proximus for me before I call them.",
+      "expected_output": "Explains that a Belgian lead needs its 10-digit KBO number and asks for it (or uses 0202.239.951 if the user gives it) before calling verify_lead; does not call check_entity for a Belgian company."
+    },
+    {
+      "id": 3,
+      "prompt": "Quickly see if the name 'Acme Trading LLC' is on any sanctions list. Free if possible.",
+      "expected_output": "Calls sanctions_preview, reports possible_match with the lists and list dates, and says a name match is a possible match to review, not a determination; offers sanctions_screen ($0.11) only if there is a possible match."
+    },
+    {
+      "id": 4,
+      "prompt": "Is wallet 0x0000000000000000000000000000000000000000 safe to pay?",
+      "expected_output": "Starts with wallet_sanctions_preview (free) and offers verify_wallet ($0.11) for the full screen; does not present the preview as a full risk assessment."
+    },
+    {
+      "id": 5,
+      "prompt": "Here are 30 Dutch leads from a trade fair, check them all.",
+      "expected_output": "States the cost (30 x $0.27 = $8.10) and asks to proceed before checking; then checks one by one and summarises how many are real_active without flags, how many need follow-up and which to drop."
+    }
+  ]
+}
