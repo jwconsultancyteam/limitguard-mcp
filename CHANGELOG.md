@@ -25,6 +25,12 @@ which renders this repository from that service's
 source and opens a pull request whenever the two diverge. There is no `Unreleased`
 section: a change is released here at the moment it is merged.
 
+## [2.11.5] - 2026-10-14
+
+### Changed
+- Published tool table and prices refreshed.
+- `examples/a2a_x402_pay.py` regenerated.
+
 ## [2.11.4] - 2026-10-12
 
 ### Added
