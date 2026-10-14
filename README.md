@@ -16,11 +16,11 @@ Check Dutch and Belgian companies, sales leads and crypto wallets before you dea
 
 **What it is:** Limitguard is a lead validation service for lead generation agencies, B2B marketing and sales teams: it checks the company behind each lead against official business registers (full coverage in the Netherlands and Belgium), EU VAT and sanctions lists, with website age in the company check, and returns proceed, review or block with the source on every line. Developers and AI agents can use its HTTP API, MCP server and A2A service, hosted in the EU.
 
-**Start here:** On MCP a paid tool takes an x402 payment per call, or debits prepaid credit (a paid key, or a funded workspace); wallet_sanctions_preview, sanctions_preview and get_trust_score are free; the free sandbox key returns mock data on the REST API only, not on MCP. Paid by x402: Lead Verify $0.05 per lead and agent check $0.005 per wallet; entity check and KYB $0.29 and risk score $0.25 fresh, $0.11 cached ($0.25 KYB) when available; report $0.55; sanctions and wallet screens $0.005; other routes at the account price. API keys, the dashboard and the Claude connector pay the account prices: Lead Verify $0.27 per lead and agent check $0.75 per wallet; $0.11-1.85 per call; entity and risk checks $0.88-1.05 fresh ($1.50 KYB), $0.11 cached ($0.25 KYB) when available.
+**Start here:** On MCP a paid tool takes an x402 payment per call, or debits prepaid credit (a paid key, or a funded workspace); wallet_sanctions_preview, sanctions_preview and get_trust_score are free; the free sandbox key returns mock data on the REST API only, not on MCP. Paid by x402: Lead Verify $0.10 per lead and agent check $0.005 per wallet; entity check and KYB $0.29 and risk score $0.25 fresh, $0.11 cached ($0.25 KYB) when available; report $0.55; sanctions and wallet screens $0.005; other routes at the account price. API keys, the dashboard and the Claude connector pay the account prices: Lead Verify $0.27 per lead and agent check $0.75 per wallet; $0.11-1.85 per call; entity and risk checks $0.88-1.05 fresh ($1.50 KYB), $0.11 cached ($0.25 KYB) when available.
 
 ## Features
 
-- **Lead verify** for Dutch and Belgian sales leads: is it a real, active company? A verdict, a 0-100 lead score and one action per flag ($0.27 with an API key, $0.05 with x402).
+- **Lead verify** for Dutch and Belgian sales leads: is it a real, active company? A verdict, a 0-100 lead score and one action per flag ($0.27 with an API key, $0.10 with x402).
 - **Company check** against the KVK and KBO registers, EU VAT (VIES), the domain and the IBAN, with a 0-100 score and a recommendation.
 - **Sanctions screen** of company and person names against the OFAC, EU and UN lists, with a free yes/no preview.
 - **Crypto wallet screen** on Base and Solana: OFAC address match, balances, wallet age, recent activity and risk rules with advice ($0.11 with an API key, $0.005 with x402).
@@ -111,7 +111,7 @@ The official x402 SDKs refuse a payment above one dollar by default (`maxAmountP
 | `POST /v1/mcp/risk-score` | $0.25 | $0.90 |
 | `POST /v1/kyb/check` | $0.29 fresh, $0.25 cached | $1.50 fresh, $0.25 cached |
 | `POST /v1/reports/entity` | $0.55 | $1.85 |
-| `POST /v1/leads/verify` | $0.05 | $0.27 |
+| `POST /v1/leads/verify` | $0.10 | $0.27 |
 | `POST /v1/agent/check` | $0.005 | $0.75 |
 | `POST /v1/mcp/verify-wallet` | $0.005 | $0.11 |
 | `POST /v1/sanctions/screen` | $0.005 | $0.11 |
@@ -337,7 +337,7 @@ which is the one to read when the two disagree. Reconciling them is the service'
 Limitguard checks the company, sales lead or crypto wallet behind a deal before you call, sign or pay. It reads official sources (the KVK and KBO business registers, EU VAT through VIES, the OFAC, EU and UN sanctions lists and public blockchain data for wallets) and answers with what it found, where and when.
 
 **How is it priced?**
-Per check, with no subscription for API keys or x402. An API key pays the account price: lead verify $0.27, company check $1.05 ($0.11 from cache when available), risk score $0.90, KYB check $1.50, sanctions screen $0.11, wallet screen $0.11, agent wallet check $0.75, company report $1.85. An x402 payment pays the lower agent price: lead verify $0.05, company check $0.29, risk score $0.25, KYB check $0.29, sanctions screen $0.005, wallet screen $0.005, agent wallet check $0.005, company report $0.55 (see [Agent prices (x402)](#agent-prices-x402)). Free: the name sanctions preview, the wallet sanctions check and your own stored trust score. A check that fails is not charged. Live prices: [/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json).
+Per check, with no subscription for API keys or x402. An API key pays the account price: lead verify $0.27, company check $1.05 ($0.11 from cache when available), risk score $0.90, KYB check $1.50, sanctions screen $0.11, wallet screen $0.11, agent wallet check $0.75, company report $1.85. An x402 payment pays the lower agent price: lead verify $0.10, company check $0.29, risk score $0.25, KYB check $0.29, sanctions screen $0.005, wallet screen $0.005, agent wallet check $0.005, company report $0.55 (see [Agent prices (x402)](#agent-prices-x402)). Free: the name sanctions preview, the wallet sanctions check and your own stored trust score. A check that fails is not charged. Live prices: [/.well-known/x402.json](https://api.limitguard.ai/.well-known/x402.json).
 
 **How do I connect it to Claude, Cursor or another MCP client?**
 Add `https://api.limitguard.ai/mcp` with your API key in the header `Authorization: Bearer lg_live_...` (a free key: see [Authentication](#authentication)). In Claude you can instead add `https://api.limitguard.ai/mcp-oauth` as a custom connector and sign in with your Limitguard account; paid checks are then taken from your workspace credit.
