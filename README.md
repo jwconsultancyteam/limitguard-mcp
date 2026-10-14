@@ -95,6 +95,27 @@ Two things gate a `tools/call`, in this order:
    before the payment check: a way to exercise the request and response shapes,
    not a cheap source of real checks.
 
+<!-- agent-prices:start -->
+## Agent prices (x402)
+
+An x402 payment pays the agent price: REST, A2A with x402, and MCP pay-per-call on `/mcp`. An API key, the dashboard and the Claude connector pay the account price, from prepaid credit. A route not listed here costs its account price with x402 too.
+
+The official x402 SDKs refuse a payment above one dollar by default (`maxAmountPerPayment`). That default covers every agent price. Raise it only for the deep-check `enhanced` and `credit` tiers and for the `/v1/keys/upgrade/*` and `/v1/keys/topup/*` purchases.
+
+| Endpoint | Agent price (x402) | Account price |
+|---|---|---|
+| `POST /v1/entity/check` | $0.29 fresh, $0.11 cached | $1.05 fresh, $0.11 cached |
+| `POST /v1/mcp/check-entity` | $0.29 | $1.05 |
+| `POST /v1/risk/score` | $0.25 fresh, $0.11 cached | $0.90 fresh, $0.11 cached |
+| `POST /v1/mcp/risk-score` | $0.25 | $0.90 |
+| `POST /v1/kyb/check` | $0.29 fresh, $0.25 cached | $1.50 fresh, $0.25 cached |
+| `POST /v1/reports/entity` | $0.55 | $1.85 |
+| `POST /v1/leads/verify` | $0.05 | $0.27 |
+| `POST /v1/agent/check` | $0.005 | $0.75 |
+| `POST /v1/mcp/verify-wallet` | $0.005 | $0.11 |
+| `POST /v1/sanctions/screen` | $0.005 | $0.11 |
+<!-- agent-prices:end -->
+
 ## Full x402 API (direct HTTP)
 
 The tools above are what the MCP server exposes over the Model Context Protocol. Clients that
@@ -109,7 +130,7 @@ engine over plain HTTP: `/v1/entity/check` behind `check_entity` (the MCP tool t
 name, country, KVK number and domain only, so no IBAN or VAT), and `/v1/risk/score` behind
 `get_risk_score`, at the same price.
 
-Payment works the same way throughout: USDC on Base or Solana, pay-per-call. The data endpoints below need no API key at all. The `/v1/keys/upgrade/*` endpoints also take payment without one,
+Payment is per call throughout: USDC on Base or Solana, at the agent price in [Agent prices (x402)](#agent-prices-x402). The Price columns below are the account prices an API key pays. The data endpoints below need no API key at all. The `/v1/keys/upgrade/*` endpoints also take payment without one,
 but they act on an API key you already hold; see [API keys and prepaid balance](#api-keys-and-prepaid-balance).
 
 ### Lead and company checks

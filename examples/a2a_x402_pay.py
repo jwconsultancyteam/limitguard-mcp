@@ -13,8 +13,10 @@ No API key. Two A2A ``message/send`` calls to POST /a2a:
    the result and ``x402.payment.receipts``.
 
 Safety built in: the quote is printed and nothing is signed until you type "yes"
-(or pass --yes), and a quote above --max-usd (default $0.20) is refused. The key is
-read from EVM_PRIVATE_KEY or asked for without echo; it is never printed.
+(or pass --yes), and a quote above --max-usd (default $0.30) is refused. The default
+covers every x402 agent price of the A2A skills; the entity check and the KYB check are
+the highest at $0.29. The key is read from EVM_PRIVATE_KEY or asked for without echo; it
+is never printed.
 
 Prerequisites:
     pip install "x402[evm,httpx]"
@@ -121,15 +123,16 @@ async def run(
             raise SystemExit(f"No 'exact' requirement on {BASE_MAINNET}; offered: {[(a.network, a.scheme) for a in required.accepts]}")
         offer = base[0]
         usd = int(offer.amount) / 10**USDC_DECIMALS
-        print(f"2. Quote for task {task['id']}: {usd:.2f} USDC on {offer.network} to {offer.pay_to}")
+        # :g keeps a sub-cent agent price ($0.005) instead of rounding it to 0.01.
+        print(f"2. Quote for task {task['id']}: {usd:g} USDC on {offer.network} to {offer.pay_to}")
         if usd > max_usd:
-            raise SystemExit(f"Refusing: {usd:.2f} USDC is above --max-usd {max_usd:.2f}.")
+            raise SystemExit(f"Refusing: {usd:g} USDC is above --max-usd {max_usd:g}.")
 
         private_key = os.environ.get("EVM_PRIVATE_KEY") or getpass.getpass("Paying wallet private key (0x..., not shown): ")
         account = Account.from_key(private_key.strip())
         del private_key
         print(f"   Paying wallet: {account.address}")
-        if not assume_yes and input(f"   Sign {usd:.2f} USDC to {offer.pay_to}? Type yes: ").strip().lower() != "yes":
+        if not assume_yes and input(f"   Sign {usd:g} USDC to {offer.pay_to}? Type yes: ").strip().lower() != "yes":
             print("Not signed; sending payment-rejected so the task is closed.")
             await _send(http, _message([{"kind": "text", "text": "rejected"}], task_id=task["id"],
                                        metadata={"x402.payment.status": "payment-rejected"}))
@@ -157,7 +160,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Pay a Limitguard A2A skill with x402 (a2a-x402 v0.2).")
     parser.add_argument("--skill", default="verify_wallet")
     parser.add_argument("--input", help="skill input as JSON (default: an example for the skill)")
-    parser.add_argument("--max-usd", type=float, default=0.20, help="refuse a quote above this (default 0.20)")
+    parser.add_argument("--max-usd", type=float, default=0.30, help="refuse a quote above this (default 0.30)")
     parser.add_argument("--yes", action="store_true", help="sign without asking")
     args = parser.parse_args()
     input_data = json.loads(args.input) if args.input else DEFAULT_INPUT.get(args.skill)
